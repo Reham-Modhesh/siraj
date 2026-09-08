@@ -52,14 +52,26 @@ tools/
 agent/
   agent.py              deterministic keyword router + answer formatting (no LLM)
 
+i18n/                   multilingual adapter around agent/ (see below) - agent/tools unaware of it
+  translate.py           Translator interface, default provider, fixed-message table
+  service.py              ask_multilingual() entry point
+  errors.py                TranslationError
+  glossary.py               terminology QA term list (not enforced automatically)
+
 config.py               paths, search tuning
+requirements.txt        i18n/'s one optional dependency (deep-translator)
 tests/
   test_tools.py         tool-level tests
   test_agent.py          router/end-to-end tests
+  test_i18n.py            multilingual adapter tests (offline, FakeTranslator)
+  manual_live_translation_check.py   manual, network-required
+  manual_terminology_check.md          manual QA checklist, not code
 ```
 
-No `llm/` directory and no LLM/provider dependency exist in this project -
-`agent/agent.py` imports only `tools/*` and the Python standard library.
+No `llm/` directory and no LLM/provider dependency exist in `agent/` or
+`tools/` - `agent/agent.py` imports only `tools/*` and the Python standard
+library. `i18n/` is a separate, optional adapter layer (see "Multilingual
+support" below); nothing in `agent/`/`tools/` imports from it.
 
 ## Datasets
 
@@ -71,11 +83,20 @@ No `llm/` directory and no LLM/provider dependency exist in this project -
 
 ## Setup
 
-No external dependencies - standard library only.
+Core retrieval/routing (`agent/`, `tools/`) has **no external
+dependencies - standard library only**. Multilingual support (`i18n/`,
+see below) is additive and introduces one optional dependency,
+`deep-translator`, needed only when calling `i18n.service.ask_multilingual`
+with a non-Arabic `lang`. Running the original Arabic-only engine
+(`agent.agent.ask`) never requires it.
 
 ```bash
 py -3 tests/test_tools.py
 py -3 tests/test_agent.py
+
+# Optional, only for multilingual support:
+pip install -r requirements.txt
+py -3 tests/test_i18n.py
 ```
 
 ## How routing works (agent/agent.py)
@@ -136,12 +157,82 @@ print(result["categories"])   # which category/categories the router matched
 print(result["tool_calls"])   # which tool(s) were called, with inputs/records
 ```
 
+## Multilingual support (`i18n/`)
+
+Siraj's Arabic engine (`agent/agent.py`, `tools/*`) is unchanged and
+remains deterministic and LLM-free. Multilingual input/output for 7
+languages (Arabic, English, Urdu, Indonesian, Turkish, French, Persian -
+`i18n.translate.SUPPORTED_LANGUAGES`) is handled by a translation adapter
+that sits *around* that engine, not inside it:
+
+```
+question (any of 7 langs) + explicit lang code (caller-supplied, never auto-detected)
+      |
+      v
+  lang == "ar"?  --yes--> agent.agent.ask(question)   [zero translator calls, zero network]
+      |no
+      v
+  translate question -> Arabic     (i18n/translate.py)
+      |
+      v
+  agent.agent.ask(question_ar)      <-- unchanged, still deterministic
+      |
+      v
+  translate answer -> target lang
+```
+
+**Determinism note:** the Arabic engine itself remains deterministic and
+LLM-free. End-to-end multilingual behavior is **not** guaranteed to be
+deterministic, since a translation provider can phrase the same sentence
+differently between calls. Only the `lang="ar"` path is fully
+deterministic (it never touches the translator).
+
+```python
+from i18n.service import ask_multilingual
+
+result = ask_multilingual("Where is Maqam Ibrahim?", lang="en")
+print(result["answer"])       # translated answer
+print(result["categories"])   # identical to what agent.agent.ask() would return - untouched
+print(result["tool_calls"])   # identical, untouched - e.g. location_id/lat/long for map use
+```
+
+`categories` and `tool_calls` are always passed through byte-identical to
+what `agent.agent.ask()` returned - only the human-readable `answer`
+string is ever translated. This matters because that structured data
+already drives other decisions downstream (e.g. map navigation to the
+nearest matching location).
+
+**Translation provider:** the default `GoogleFreeTranslator`
+(`i18n/translate.py`) uses `deep-translator`'s unofficial, no-API-key
+Google Translate wrapper. It is a **development/prototype provider only**
+- no SLA, can be rate-limited or blocked. The `Translator` protocol
+decouples `i18n/service.py` from any specific provider, so swapping in an
+official one (Google Cloud Translation, Azure Translator, ...) later is a
+new class, not a rewrite.
+
+**Failure behavior:** if translation fails, `ask_multilingual` raises
+`i18n.errors.TranslationError` rather than returning a fabricated or
+wrong-language answer. Callers must handle this explicitly.
+
+**Terminology QA:** `i18n/glossary.py::KEY_TERMS` lists the Hajj/Umrah
+terms (الصفا، المروة، الطواف، السعي، الإحرام، الميقات، الشوط، التحلل،
+طواف الإفاضة، طواف الوداع، الهدي، الفدية) that need human sign-off across
+all 7 languages before production use - see
+`tests/manual_terminology_check.md` and
+`tests/manual_live_translation_check.py`. This is QA support, not an
+automated translation-quality guarantee.
+
 ## Tests
 
 ```bash
 py -3 tests/test_tools.py    # tool-level tests
 py -3 tests/test_agent.py    # router + end-to-end tests
+py -3 tests/test_i18n.py     # multilingual adapter tests (offline, FakeTranslator)
 ```
+
+`tests/manual_live_translation_check.py` and
+`tests/manual_terminology_check.md` are manual, network-required checks -
+never run as part of the automated suite above.
 
 `test_agent.py` covers: a location question, a location-details question, a
 lost-pilgrim/services question (verifying it does *not* also trigger the
@@ -184,3 +275,9 @@ original single-keyword threshold, since a lone strong keyword (e.g.
   passed through unmodified from the dataset.
 - **Not built here**: frontend, backend/API, auth, persistent database, 3D
   guide, maps, voice - all out of scope for this prototype.
+- **Multilingual support is the one intentional exception** to "no
+  external dependencies": `i18n/` adds `deep-translator` for translation
+  only, isolated from `agent/`/`tools/`. See "Multilingual support" above
+  for the full trade-off (prototype-grade provider, non-deterministic
+  end-to-end behavior for non-Arabic languages, terminology QA still
+  pending human sign-off).

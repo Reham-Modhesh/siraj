@@ -1,0 +1,3 @@
+# Only used by i18n/ (multilingual translation adapter). agent/ and
+# tools/ remain standard-library-only, per the project's core design.
+deep-translator
