@@ -249,6 +249,38 @@ export const ar = {
 
  // LanguageSwitcher.tsx
  'lang_switcher.aria': 'لغة التطبيق',
+
+ // TabBar.tsx
+ 'tabbar.home': 'الرئيسية',
+ 'tabbar.explore': 'استكشاف',
+ 'tabbar.rituals': 'المناسك',
+ 'tabbar.settings': 'الإعدادات',
+ 'tabbar.ask_fab_aria': 'اسأل سكينة',
+
+ // Home.tsx
+ 'home.brand_subtitle': 'دليلك في الحرم',
+ 'home.lost_button': 'أنا ضايع',
+ 'home.stage_caption': 'الخطوة {current} من {total} · {stage}',
+
+ // Explore.tsx
+ 'explore.section_more': 'المزيد',
+ 'explore.section_less': 'أقل',
+ 'explore.header_title': 'استكشاف الحرم',
+
+ // Rituals.tsx
+ 'rituals.header_title': 'خطوات المناسك',
+ 'rituals.mode_hajj': 'الحج',
+ 'rituals.mode_umrah': 'العمرة',
+ 'rituals.mode_hajj_unavailable': 'خطوات الحج قريبًا · هذا النموذج التجريبي يغطي العمرة فقط',
+ 'rituals.ring_step_of': 'الخطوة {current} من {total}',
+
+ // AskSakina.tsx (overlay chrome; functional strings reuse voice.*)
+ 'ask.title': 'اسأل سكينة',
+ 'ask.subtitle': 'اسأل بصوتك وتوصلك الإجابة صوتياً أيضاً',
+ 'ask.close_aria': 'إغلاق اسأل سكينة',
+
+ // Settings.tsx
+ 'settings.region_label': 'المنطقة والمناسك',
 } as const
 
 export type TranslationKey = keyof typeof ar

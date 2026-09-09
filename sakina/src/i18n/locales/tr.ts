@@ -245,4 +245,30 @@ export const tr: Record<TranslationKey, string> = {
  'voice.unsupported': 'Tarayıcınız ses tanımayı desteklemiyor · metin kutusunu kullanın',
 
  'lang_switcher.aria': 'Uygulama dili',
+
+ 'tabbar.home': 'Ana Sayfa',
+ 'tabbar.explore': 'Keşfet',
+ 'tabbar.rituals': 'İbadetler',
+ 'tabbar.settings': 'Ayarlar',
+ 'tabbar.ask_fab_aria': "Sakina'ya Sor",
+
+ 'home.brand_subtitle': 'Harem içindeki rehberiniz',
+ 'home.lost_button': 'Kayboldum',
+ 'home.stage_caption': '{total} adımdan {current}. adım · {stage}',
+
+ 'explore.section_more': 'Daha fazla',
+ 'explore.section_less': 'Daha az',
+ 'explore.header_title': "Harem'i keşfet",
+
+ 'rituals.header_title': 'İbadet adımları',
+ 'rituals.mode_hajj': 'Hac',
+ 'rituals.mode_umrah': 'Umre',
+ 'rituals.mode_hajj_unavailable': 'Hac adımları yakında · bu prototip yalnızca Umre’yi kapsıyor',
+ 'rituals.ring_step_of': '{total} adımdan {current}. adım',
+
+ 'ask.title': "Sakina'ya Sor",
+ 'ask.subtitle': 'Sesinizle sorun, yanıt da sesli okunsun',
+ 'ask.close_aria': "Sakina'ya Sor'u kapat",
+
+ 'settings.region_label': 'Bölge ve ibadetler',
 }

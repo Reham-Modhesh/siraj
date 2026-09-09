@@ -245,4 +245,30 @@ export const fr: Record<TranslationKey, string> = {
  'voice.unsupported': "Votre navigateur ne prend pas en charge la reconnaissance vocale · utilisez le champ de texte",
 
  'lang_switcher.aria': "Langue de l'application",
+
+ 'tabbar.home': 'Accueil',
+ 'tabbar.explore': 'Explorer',
+ 'tabbar.rituals': 'Rituels',
+ 'tabbar.settings': 'Réglages',
+ 'tabbar.ask_fab_aria': 'Demander à Sakina',
+
+ 'home.brand_subtitle': 'Votre guide dans le Haram',
+ 'home.lost_button': 'Je suis perdu',
+ 'home.stage_caption': 'Étape {current} sur {total} · {stage}',
+
+ 'explore.section_more': 'Plus',
+ 'explore.section_less': 'Moins',
+ 'explore.header_title': 'Explorer le Haram',
+
+ 'rituals.header_title': 'Étapes des rituels',
+ 'rituals.mode_hajj': 'Hajj',
+ 'rituals.mode_umrah': 'Omra',
+ 'rituals.mode_hajj_unavailable': 'Les étapes du Hajj arrivent bientôt · ce prototype couvre uniquement la Omra',
+ 'rituals.ring_step_of': 'Étape {current} sur {total}',
+
+ 'ask.title': 'Demander à Sakina',
+ 'ask.subtitle': 'Posez votre question à voix haute, la réponse vous sera aussi lue',
+ 'ask.close_aria': 'Fermer Demander à Sakina',
+
+ 'settings.region_label': 'Région et rituels',
 }

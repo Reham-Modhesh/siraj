@@ -1,18 +1,20 @@
 // Voice/text entry point to Siraj (../siraj/voice_prototype/server.py),
-// separate from Sakina's own text search (App.tsx/navigation.ts -
+// separate from Sakina's own text search (Home.tsx/navigation.ts -
 // resolveDestination) which is untouched. Resolves Siraj's answer to a
 // map action via resolveSirajNavigation (src/siraj.ts) and drives the
 // map through the existing external control surface, window.sakinaMap
 // (src/bridge.ts) - the same bridge any outside "brain" would use.
 //
-// Language is NOT owned locally - it reads/writes the shared s.lang
-// (src/store.ts), the same field LanguageSwitcher.tsx writes, so picking
-// a language in either place updates the whole app together.
-import {useRef,useState} from 'react'
-import {Loader2,Mic,Send,Volume2,X} from 'lucide-react'
-import {askSiraj,resolveSirajNavigation} from './siraj'
+// Renamed from VoiceAssistant.tsx: this is now overlay content controlled
+// by App.tsx's mic FAB (open/onClose props) instead of a corner toggle
+// with its own local `open` state - the ask/listen/speak logic itself is
+// unchanged. Language is still NOT owned locally - it reads/writes the
+// shared s.lang (src/store.ts), the same field LanguageSwitcher.tsx writes.
+import {useRef, useState} from 'react'
+import {Loader2, Mic, Send, Volume2, X} from 'lucide-react'
+import {askSiraj, resolveSirajNavigation} from './siraj'
 import {useMap} from './store'
-import {LANGS, t} from './i18n/index'
+import {t} from './i18n/index'
 
 // Web Speech API locales - deliberately separate from Siraj's own
 // ISO 639-1 language codes (i18n/translate.py::SUPPORTED_LANGUAGES on the
@@ -21,10 +23,9 @@ import {LANGS, t} from './i18n/index'
 // concerns that are never conflated.
 const SPEECH_LOCALE: Record<string, string> = {ar: 'ar-SA', en: 'en-US', ur: 'ur-PK', id: 'id-ID', tr: 'tr-TR', fr: 'fr-FR', fa: 'fa-IR'}
 
-export default function VoiceAssistant() {
+export default function AskSakina({open, onClose}: {open: boolean; onClose: () => void}) {
  const s = useMap()
  const lang = s.lang
- const [open, setOpen] = useState(false)
  const [listening, setListening] = useState(false)
  const [busy, setBusy] = useState(false)
  const [transcript, setTranscript] = useState('')
@@ -90,75 +91,63 @@ export default function VoiceAssistant() {
   recognition.start()
  }
 
+ if (!open) return null
  return (
-  <>
-   <button className="siraj-toggle" onClick={() => setOpen(!open)} aria-label={t('voice.toggle_aria', lang)} aria-pressed={open}>
-    <Mic size={17} />
-    <span>سراج</span>
-   </button>
-   {open && (
-    <div className="siraj-panel">
-     <div className="row between">
-      <strong>{t('voice.panel_title', lang)}</strong>
-      <button className="icon-button" onClick={() => setOpen(false)} aria-label={t('voice.close_aria', lang)}>
-       <X size={16} />
-      </button>
-     </div>
-     <select aria-label={t('voice.lang_aria', lang)} value={lang} onChange={e => s.setLang(e.target.value as typeof lang)}>
-      {LANGS.map(l => (
-       <option key={l.code} value={l.code}>
-        {l.label}
-       </option>
-      ))}
-     </select>
-     <button className={`primary w-full ${listening ? 'siraj-listening' : ''}`} onClick={toggleListen}>
-      <Mic size={16} />
-      {listening ? t('voice.listening', lang) : t('voice.press_to_talk', lang)}
+  <div className="ask-overlay">
+   <div className="ask-sheet">
+    <div className="row between">
+     <div><strong>{t('ask.title', lang)}</strong><small>{t('ask.subtitle', lang)}</small></div>
+     <button className="icon-button" onClick={onClose} aria-label={t('ask.close_aria', lang)}>
+      <X size={18} />
      </button>
-     <div className="siraj-text-row">
-      <input
-       className="siraj-text-input"
-       aria-label={t('voice.text_aria', lang)}
-       placeholder={t('voice.text_placeholder', lang)}
-       value={textValue}
-       onChange={e => setTextValue(e.target.value)}
-       onKeyDown={e => {
-        if (e.key === 'Enter') {
-         ask(textValue)
-         setTextValue('')
-        }
-       }}
-      />
-      <button
-       className="icon-button"
-       aria-label={t('voice.send_aria', lang)}
-       onClick={() => {
+    </div>
+    <button className={`primary w-full ${listening ? 'siraj-listening' : ''}`} onClick={toggleListen}>
+     <Mic size={16} />
+     {listening ? t('voice.listening', lang) : t('voice.press_to_talk', lang)}
+    </button>
+    <div className="siraj-text-row">
+     <input
+      className="siraj-text-input"
+      aria-label={t('voice.text_aria', lang)}
+      placeholder={t('voice.text_placeholder', lang)}
+      value={textValue}
+      onChange={e => setTextValue(e.target.value)}
+      onKeyDown={e => {
+       if (e.key === 'Enter') {
         ask(textValue)
         setTextValue('')
-       }}
-      >
-       <Send size={16} />
+       }
+      }}
+     />
+     <button
+      className="icon-button"
+      aria-label={t('voice.send_aria', lang)}
+      onClick={() => {
+       ask(textValue)
+       setTextValue('')
+      }}
+     >
+      <Send size={16} />
+     </button>
+    </div>
+    {busy && (
+     <div className="siraj-status">
+      <Loader2 size={14} className="siraj-spin" />
+      {t('voice.asking', lang)}
+     </div>
+    )}
+    {transcript && <div className="siraj-transcript">{transcript}</div>}
+    {answer && (
+     <div className="siraj-answer">
+      <p>{answer}</p>
+      <button className="text-button small" onClick={speak}>
+       <Volume2 size={14} />
+       {t('voice.listen_button', lang)}
       </button>
      </div>
-     {busy && (
-      <div className="siraj-status">
-       <Loader2 size={14} className="siraj-spin" />
-       {t('voice.asking', lang)}
-      </div>
-     )}
-     {transcript && <div className="siraj-transcript">{transcript}</div>}
-     {answer && (
-      <div className="siraj-answer">
-       <p>{answer}</p>
-       <button className="text-button small" onClick={speak}>
-        <Volume2 size={14} />
-        {t('voice.listen_button', lang)}
-       </button>
-      </div>
-     )}
-     {note && <small className="siraj-note">{note}</small>}
-    </div>
-   )}
-  </>
+    )}
+    {note && <small className="siraj-note">{note}</small>}
+   </div>
+  </div>
  )
 }

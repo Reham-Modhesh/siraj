@@ -245,4 +245,30 @@ export const ur: Record<TranslationKey, string> = {
  'voice.unsupported': 'آپ کا براؤزر صوتی شناخت سپورٹ نہیں کرتا · ٹیکسٹ باکس استعمال کریں',
 
  'lang_switcher.aria': 'ایپ کی زبان',
+
+ 'tabbar.home': 'ہوم',
+ 'tabbar.explore': 'دریافت',
+ 'tabbar.rituals': 'مناسک',
+ 'tabbar.settings': 'ترتیبات',
+ 'tabbar.ask_fab_aria': 'سکینہ سے پوچھیں',
+
+ 'home.brand_subtitle': 'حرم میں آپ کا رہنما',
+ 'home.lost_button': 'میں کھو گیا ہوں',
+ 'home.stage_caption': 'مرحلہ {current} از {total} · {stage}',
+
+ 'explore.section_more': 'مزید',
+ 'explore.section_less': 'کم',
+ 'explore.header_title': 'حرم دریافت کریں',
+
+ 'rituals.header_title': 'مناسک کے مراحل',
+ 'rituals.mode_hajj': 'حج',
+ 'rituals.mode_umrah': 'عمرہ',
+ 'rituals.mode_hajj_unavailable': 'حج کے مراحل جلد آ رہے ہیں · یہ پروٹو ٹائپ صرف عمرہ کا احاطہ کرتا ہے',
+ 'rituals.ring_step_of': 'مرحلہ {current} از {total}',
+
+ 'ask.title': 'سکینہ سے پوچھیں',
+ 'ask.subtitle': 'اپنی آواز میں پوچھیں اور جواب بھی سن سکتے ہیں',
+ 'ask.close_aria': 'سکینہ سے پوچھیں بند کریں',
+
+ 'settings.region_label': 'علاقہ اور مناسک',
 }
