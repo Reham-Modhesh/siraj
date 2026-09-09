@@ -7,6 +7,10 @@ unchanged. Requires the OPENROUTER_API_KEY environment variable to be set
 (see .env.example) for any non-Arabic language; the API key is read
 server-side only (i18n/translate.py) and is never sent to the browser.
 
+Also serves /speak (i18n/tts.py, Gemini's native audio output) for
+sakina/src/AskSakina.tsx's "listen" button - a separate GEMINI_API_KEY
+env var, since audio output isn't reachable through OpenRouter.
+
 Run:
     python3 voice_prototype/server.py
 Then open http://localhost:8787
@@ -22,6 +26,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from i18n.errors import TranslationError  # noqa: E402
 from i18n.service import ask_multilingual  # noqa: E402
 from i18n.translate import SUPPORTED_LANGUAGES  # noqa: E402
+from i18n.tts import TTSError, synthesize_speech  # noqa: E402
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
 PORT = 8787
@@ -63,10 +68,15 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_POST(self):
-        if self.path != "/ask":
+        if self.path == "/ask":
+            self._handle_ask()
+        elif self.path == "/speak":
+            self._handle_speak()
+        else:
             self.send_response(404)
             self.end_headers()
-            return
+
+    def _handle_ask(self):
         length = int(self.headers.get("Content-Length", 0))
         try:
             data = json.loads(self.rfile.read(length) or b"{}")
@@ -93,6 +103,36 @@ class Handler(BaseHTTPRequestHandler):
             "lang": result["lang"],
             "question_ar": result["question_ar"],
         })
+
+    def _handle_speak(self):
+        # Text-to-speech for the "listen" button (sakina/src/AskSakina.tsx)
+        # - see i18n/tts.py for the Gemini call this wraps. Kept as its own
+        # route (not folded into /ask) since the browser's Web Speech API
+        # already handles recognition fine; only speech *output* needed a
+        # real voice provider once we required languages the OS has none
+        # installed for (confirmed: Urdu and Persian on macOS).
+        length = int(self.headers.get("Content-Length", 0))
+        try:
+            data = json.loads(self.rfile.read(length) or b"{}")
+            text = str(data.get("text", "")).strip()
+            lang = str(data.get("lang", "ar")).strip() or "ar"
+        except (json.JSONDecodeError, UnicodeDecodeError):
+            self._send_json(400, {"error": "invalid JSON body"})
+            return
+        if not text:
+            self._send_json(400, {"error": "missing 'text'"})
+            return
+        try:
+            audio = synthesize_speech(text, lang)
+        except TTSError as exc:
+            self._send_json(502, {"error": "tts_unavailable", "detail": str(exc)})
+            return
+        self.send_response(200)
+        self.send_header("Content-Type", "audio/wav")
+        self.send_header("Content-Length", str(len(audio)))
+        self._cors_headers()
+        self.end_headers()
+        self.wfile.write(audio)
 
     def log_message(self, fmt, *args):
         print("[voice_prototype]", fmt % args)

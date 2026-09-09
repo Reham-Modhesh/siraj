@@ -11,6 +11,7 @@
 import type {Category} from './navigation'
 
 export const SIRAJ_ENDPOINT = 'http://localhost:8787/ask'
+export const SIRAJ_SPEAK_ENDPOINT = 'http://localhost:8787/speak'
 
 // Siraj location_id -> Sakina POI id, for the handful of places that
 // genuinely exist in both datasets.

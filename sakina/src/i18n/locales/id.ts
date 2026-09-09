@@ -242,7 +242,7 @@ export const id: Record<TranslationKey, string> = {
  'voice.unmapped_note': 'Siraj mengenal lokasi ini, tetapi demo peta saat ini belum mencakupnya',
  'voice.error_unreachable': 'Tidak dapat menghubungi Siraj saat ini. Silakan coba lagi sebentar lagi.',
  'voice.unsupported': 'Browser Anda tidak mendukung pengenalan suara · gunakan kotak teks',
- 'voice.tts_unavailable': 'Tidak ada suara yang tersedia untuk bahasa ini di perangkat Anda · baca teks di atas',
+ 'voice.tts_unavailable': 'Audio tidak dapat diputar saat ini · baca teks di atas',
  'voice.mic_denied': 'Akses mikrofon ditolak. Silakan izinkan akses mikrofon, atau ketik pertanyaan Anda.',
  'voice.mic_error': 'Terjadi masalah pada pengenalan suara. Silakan coba lagi atau ketik pertanyaan Anda.',
  'voice.translated_to_arabic_prefix': 'Diterjemahkan ke Arab:',

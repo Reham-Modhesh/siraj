@@ -12,7 +12,7 @@
 // shared s.lang (src/store.ts), the same field LanguageSwitcher.tsx writes.
 import {useRef, useState} from 'react'
 import {Loader2, Mic, Send, Volume2, X} from 'lucide-react'
-import {askSiraj, resolveSirajNavigation} from './siraj'
+import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT} from './siraj'
 import {useMap} from './store'
 import {t} from './i18n/index'
 
@@ -65,44 +65,41 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
   }
  }
 
- const getVoicesReady = (): Promise<SpeechSynthesisVoice[]> =>
-  new Promise(resolve => {
-   // getVoices() often returns [] on the very first call in a session -
-   // the list loads asynchronously and only the "voiceschanged" event
-   // (or a later call) reflects it. Wait for it once instead of trusting
-   // an empty first read, or every language looks unavailable.
-   const existing = window.speechSynthesis.getVoices()
-   if (existing.length) return resolve(existing)
-   const onReady = () => {
-    window.speechSynthesis.removeEventListener('voiceschanged', onReady)
-    resolve(window.speechSynthesis.getVoices())
-   }
-   window.speechSynthesis.addEventListener('voiceschanged', onReady)
-   setTimeout(onReady, 1200)
-  })
+ const [speaking, setSpeaking] = useState(false)
+ const audioRef = useRef<HTMLAudioElement | null>(null)
 
  const speak = async () => {
-  // Best-effort add-on only: the translated answer text above always
-  // renders regardless of whether the browser/OS has a voice for this
-  // locale - availability and quality vary by system and browser. Some
-  // languages (e.g. Urdu, Persian) have zero installed system voices on
-  // many machines, in which case speechSynthesis.speak() just silently
-  // produces no audio - so pick a real voice ourselves and tell the user
-  // plainly when none exists, instead of a confusing silent no-op.
-  if (!answer || !('speechSynthesis' in window)) return
-  const target = SPEECH_LOCALE[lang] || 'ar-SA'
-  const primary = target.split('-')[0]
-  const voices = await getVoicesReady()
-  const voice = voices.find(v => v.lang === target) || voices.find(v => v.lang.split('-')[0] === primary)
-  if (!voice) {
+  // Real speech output via Gemini (i18n/tts.py, served through
+  // voice_prototype/server.py's /speak route) - deliberately NOT the
+  // browser's speechSynthesis/OS voices, which are inconsistent across
+  // machines and outright missing for some languages (e.g. Urdu, Persian
+  // have zero installed macOS voices). The translated answer text above
+  // always renders regardless of whether this succeeds.
+  if (!answer || speaking) return
+  setNote('')
+  setSpeaking(true)
+  try {
+   const res = await fetch(SIRAJ_SPEAK_ENDPOINT, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: answer, lang}),
+   })
+   if (!res.ok) {
+    setNote(t('voice.tts_unavailable', lang))
+    return
+   }
+   const blob = await res.blob()
+   const url = URL.createObjectURL(blob)
+   audioRef.current?.pause()
+   const audio = new Audio(url)
+   audioRef.current = audio
+   audio.onended = () => URL.revokeObjectURL(url)
+   await audio.play()
+  } catch {
    setNote(t('voice.tts_unavailable', lang))
-   return
+  } finally {
+   setSpeaking(false)
   }
-  window.speechSynthesis.cancel()
-  const utter = new SpeechSynthesisUtterance(answer)
-  utter.lang = target
-  utter.voice = voice
-  window.speechSynthesis.speak(utter)
  }
 
  const toggleListen = () => {
@@ -191,8 +188,8 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
     {answer && (
      <div className="siraj-answer">
       <p>{answer}</p>
-      <button className="text-button small" onClick={speak}>
-       <Volume2 size={14} />
+      <button className="text-button small" onClick={speak} disabled={speaking}>
+       {speaking ? <Loader2 size={14} className="siraj-spin" /> : <Volume2 size={14} />}
        {t('voice.listen_button', lang)}
       </button>
      </div>
