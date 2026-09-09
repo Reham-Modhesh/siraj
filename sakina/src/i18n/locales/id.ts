@@ -264,6 +264,9 @@ export const id: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'Pemandu Anda di Masjidil Haram',
  'home.lost_button': 'Saya tersesat',
  'home.stage_caption': 'Langkah {current} dari {total} · {stage}',
+ 'home.start_title': 'Mulai perjalanan Umrah Anda',
+ 'home.start_hint': 'Kami akan memandu Anda langkah demi langkah di peta, dari memasuki masjid hingga menyelesaikan Umrah Anda. Ketuk mulai saat Anda siap.',
+ 'home.start_button': 'Mulai Umrah',
 
  'explore.section_more': 'Lainnya',
  'explore.section_less': 'Lebih sedikit',

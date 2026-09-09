@@ -264,6 +264,9 @@ export const en: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'Your guide inside the Haram',
  'home.lost_button': "I'm lost",
  'home.stage_caption': 'Step {current} of {total} · {stage}',
+ 'home.start_title': 'Start your Umrah journey',
+ 'home.start_hint': "We'll guide you step by step on the map, from entering the mosque to completing your Umrah. Tap start when you're ready.",
+ 'home.start_button': 'Start your Umrah',
 
  'explore.section_more': 'More',
  'explore.section_less': 'Less',

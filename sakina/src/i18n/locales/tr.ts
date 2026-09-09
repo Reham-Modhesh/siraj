@@ -264,6 +264,9 @@ export const tr: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'Harem içindeki rehberiniz',
  'home.lost_button': 'Kayboldum',
  'home.stage_caption': '{total} adımdan {current}. adım · {stage}',
+ 'home.start_title': 'Umre yolculuğunuzu başlatın',
+ 'home.start_hint': 'Camiye girişten Umrenizi tamamlamaya kadar haritada adım adım size yol göstereceğiz. Hazır olduğunuzda başlat düğmesine dokunun.',
+ 'home.start_button': 'Umreyi başlat',
 
  'explore.section_more': 'Daha fazla',
  'explore.section_less': 'Daha az',

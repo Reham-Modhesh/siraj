@@ -264,6 +264,9 @@ export const fr: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'Votre guide dans le Haram',
  'home.lost_button': 'Je suis perdu',
  'home.stage_caption': 'Étape {current} sur {total} · {stage}',
+ 'home.start_title': 'Commencez votre voyage de Omra',
+ 'home.start_hint': "Nous vous guiderons étape par étape sur la carte, de l'entrée dans la mosquée jusqu'à l'achèvement de votre Omra. Appuyez sur commencer quand vous êtes prêt.",
+ 'home.start_button': 'Commencer votre Omra',
 
  'explore.section_more': 'Plus',
  'explore.section_less': 'Moins',

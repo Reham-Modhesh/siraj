@@ -264,6 +264,9 @@ export const fa: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'راهنمای شما در حرم',
  'home.lost_button': 'راهم را گم کرده‌ام',
  'home.stage_caption': 'مرحله {current} از {total} · {stage}',
+ 'home.start_title': 'سفر عمره خود را آغاز کنید',
+ 'home.start_hint': 'ما شما را قدم به قدم روی نقشه راهنمایی می‌کنیم، از ورود به مسجد تا اتمام عمره. هر وقت آماده بودید روی شروع بزنید.',
+ 'home.start_button': 'شروع عمره',
 
  'explore.section_more': 'بیشتر',
  'explore.section_less': 'کمتر',

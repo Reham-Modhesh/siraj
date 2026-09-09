@@ -270,6 +270,9 @@ export const ar = {
  'home.brand_subtitle': 'دليلك في الحرم',
  'home.lost_button': 'أنا ضايع',
  'home.stage_caption': 'الخطوة {current} من {total} · {stage}',
+ 'home.start_title': 'ابدأ رحلة عمرتك',
+ 'home.start_hint': 'سنرشدك خطوة بخطوة على الخريطة، من دخول الحرم إلى إتمام العمرة. اضغط ابدأ عندما تكون جاهزًا.',
+ 'home.start_button': 'ابدأ عمرتك',
 
  // Explore.tsx
  'explore.section_more': 'المزيد',

@@ -185,12 +185,24 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
     </div>
    )}
    <div className="home-journey">
-    <div className="home-stepper">
-     <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
-     <small>{t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}</small>
-    </div>
-    {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
-    {s.ritual ? (
+    {!s.started && s.stage === 0 && !destination ? (
+     // A clean gate before any step-tracking shows up - jumping straight
+     // into "step 1 of 10" on first open (with no explicit moment where
+     // the pilgrim chose to begin) was what read as the map "losing" them
+     // mid-journey with no clear starting point.
+     <div className="start-journey-card">
+      <h2>{t('home.start_title', lang)}</h2>
+      <p>{t('home.start_hint', lang)}</p>
+      <button className="primary w-full" onClick={s.startJourney}><Navigation size={17} />{t('home.start_button', lang)}</button>
+     </div>
+    ) : (
+     <>
+      <div className="home-stepper">
+       <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
+       <small>{t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}</small>
+      </div>
+      {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
+      {s.ritual ? (
      <div className="ritual-card">
       <div className="row between"><span className="eyebrow">{s.ritual === 'tawaf' ? t('ritual.tracking_tawaf', lang) : t('ritual.tracking_sai', lang)}</span><span className="live-dot">{s.running ? t('sim.running', lang) : t('sim.paused', lang)}</span></div>
       <div className="lap-number">{number(Math.min(7, (s.ritual === 'tawaf' ? s.tawaf : s.sai) + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
@@ -243,6 +255,8 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
        </div>
       )}
      </div>
+     )}
+     </>
     )}
    </div>
    <div className="map-attribution"><span className="scale-line" /><span>{t('attribution.scale', lang, {value: number(50)})}</span><i />{t('attribution.disclaimer', lang)}</div>

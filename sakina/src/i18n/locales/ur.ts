@@ -264,6 +264,9 @@ export const ur: Record<TranslationKey, string> = {
  'home.brand_subtitle': 'حرم میں آپ کا رہنما',
  'home.lost_button': 'میں کھو گیا ہوں',
  'home.stage_caption': 'مرحلہ {current} از {total} · {stage}',
+ 'home.start_title': 'اپنے عمرے کا سفر شروع کریں',
+ 'home.start_hint': 'ہم آپ کو نقشے پر قدم بہ قدم رہنمائی دیں گے، مسجد میں داخل ہونے سے عمرہ مکمل کرنے تک۔ تیار ہونے پر شروع کریں پر ٹیپ کریں۔',
+ 'home.start_button': 'عمرہ شروع کریں',
 
  'explore.section_more': 'مزید',
  'explore.section_less': 'کم',

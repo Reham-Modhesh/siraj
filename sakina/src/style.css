@@ -31,6 +31,9 @@
 .ritual-modal h4{font-size:13px;color:#998351;margin:14px 0 3px}
 .ritual-modal p{font-size:13px;line-height:1.9;color:#7f9270;margin-top:7px}
 .ritual-modal .row.between{align-items:flex-start;gap:10px}
+.start-journey-card{padding:20px 17px;background:#f5f5eb;border:1px solid #dfdfcd;border-radius:12px;text-align:center}
+.start-journey-card h2{font-size:17px;margin-bottom:8px}
+.start-journey-card p{font-size:12px;line-height:1.8;color:#87907e;margin-bottom:15px}
 .siraj-note{color:#a15a3f;line-height:1.7}
 
 /* LanguageSwitcher.tsx - always-visible, writes to the shared s.lang */
