@@ -10,8 +10,17 @@
 // rather than guessed at.
 import type {Category} from './navigation'
 
-export const SIRAJ_ENDPOINT = 'http://localhost:8787/ask'
-export const SIRAJ_SPEAK_ENDPOINT = 'http://localhost:8787/speak'
+// 'localhost' only means "this machine" - when Sakina is opened from
+// another device on the network (e.g. a phone hitting the dev machine's
+// LAN IP, matching how voice_prototype/server.py binds 0.0.0.0), a
+// hardcoded 'localhost' here would point that device at itself instead
+// of back at the machine actually running the backend, and every
+// request would fail outright (connection refused). Deriving the host
+// from the page's own address fixes both cases; typeof window guards
+// the Node test environment (siraj.test.ts), which has no window.
+const SIRAJ_HOST = typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost'
+export const SIRAJ_ENDPOINT = `http://${SIRAJ_HOST}:8787/ask`
+export const SIRAJ_SPEAK_ENDPOINT = `http://${SIRAJ_HOST}:8787/speak`
 
 // Keeps spoken answers to a reasonable length regardless of which TTS
 // provider i18n/tts.py calls (started with Gemini, now openai/gpt-audio
