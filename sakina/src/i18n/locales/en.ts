@@ -245,4 +245,30 @@ export const en: Record<TranslationKey, string> = {
  'voice.unsupported': "Your browser doesn't support speech recognition · use the text box",
 
  'lang_switcher.aria': 'App language',
+
+ 'tabbar.home': 'Home',
+ 'tabbar.explore': 'Explore',
+ 'tabbar.rituals': 'Rituals',
+ 'tabbar.settings': 'Settings',
+ 'tabbar.ask_fab_aria': 'Ask Sakina',
+
+ 'home.brand_subtitle': 'Your guide inside the Haram',
+ 'home.lost_button': "I'm lost",
+ 'home.stage_caption': 'Step {current} of {total} · {stage}',
+
+ 'explore.section_more': 'More',
+ 'explore.section_less': 'Less',
+ 'explore.header_title': 'Explore the Haram',
+
+ 'rituals.header_title': 'Ritual steps',
+ 'rituals.mode_hajj': 'Hajj',
+ 'rituals.mode_umrah': 'Umrah',
+ 'rituals.mode_hajj_unavailable': 'Hajj steps coming soon · this prototype covers Umrah only',
+ 'rituals.ring_step_of': 'Step {current} of {total}',
+
+ 'ask.title': 'Ask Sakina',
+ 'ask.subtitle': 'Ask by voice and get the answer read back to you too',
+ 'ask.close_aria': 'Close Ask Sakina',
+
+ 'settings.region_label': 'Region & rituals',
 }

@@ -245,4 +245,30 @@ export const id: Record<TranslationKey, string> = {
  'voice.unsupported': 'Browser Anda tidak mendukung pengenalan suara · gunakan kotak teks',
 
  'lang_switcher.aria': 'Bahasa aplikasi',
+
+ 'tabbar.home': 'Beranda',
+ 'tabbar.explore': 'Jelajahi',
+ 'tabbar.rituals': 'Manasik',
+ 'tabbar.settings': 'Setelan',
+ 'tabbar.ask_fab_aria': 'Tanya Sakina',
+
+ 'home.brand_subtitle': 'Pemandu Anda di Masjidil Haram',
+ 'home.lost_button': 'Saya tersesat',
+ 'home.stage_caption': 'Langkah {current} dari {total} · {stage}',
+
+ 'explore.section_more': 'Lainnya',
+ 'explore.section_less': 'Lebih sedikit',
+ 'explore.header_title': 'Jelajahi Masjidil Haram',
+
+ 'rituals.header_title': 'Langkah manasik',
+ 'rituals.mode_hajj': 'Haji',
+ 'rituals.mode_umrah': 'Umrah',
+ 'rituals.mode_hajj_unavailable': 'Langkah Haji segera hadir · prototipe ini hanya mencakup Umrah',
+ 'rituals.ring_step_of': 'Langkah {current} dari {total}',
+
+ 'ask.title': 'Tanya Sakina',
+ 'ask.subtitle': 'Tanya dengan suara Anda dan jawabannya juga akan dibacakan',
+ 'ask.close_aria': 'Tutup Tanya Sakina',
+
+ 'settings.region_label': 'Kawasan & manasik',
 }

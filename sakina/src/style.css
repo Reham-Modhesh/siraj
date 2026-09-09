@@ -37,4 +37,85 @@
 @media(max-width:700px){.map-search{width:calc(100% - 146px);max-width:none}.region-navigation{top:74px;inset-inline:15px;gap:3px;padding:4px;border-radius:9px;justify-content:flex-start}.region-navigation button{flex:0 0 auto;font-size:11px;padding:9px 10px;gap:5px;min-height:38px}.region-navigation svg{width:15px}.region-disclaimer{top:128px;font-size:8px;max-width:calc(100% - 30px);white-space:normal;text-align:center;width:100%;line-height:1.6}.floor-picker{top:160px}.map-quick-actions{top:160px}.turn-banner{top:266px;inset-inline-start:76px;inset-inline-end:15px;padding:9px}.region-caption{bottom:105px;width:calc(100% - 115px);min-width:0;padding:10px 12px;left:55%;border-radius:9px}.region-caption>strong{font-size:18px}.region-caption>p{font-size:10px;margin-bottom:8px}.region-eyebrow{font-size:10px}.region-caption>.row{gap:5px}.region-caption .primary,.region-caption .secondary{font-size:10px;padding:7px;min-height:34px}.region-caption svg{width:13px}.region-caption .secondary{display:none}.overview-legend{flex-wrap:wrap;gap:8px;justify-content:center}.lost-card{top:262px}.map-controls{bottom:150px}.region-caption:has(.overview-legend){width:calc(100% - 100px)}.search-input{gap:7px;padding-inline:10px}.search-input input{font-size:12px}.search-key{display:none}.poi b{font-size:9px}.user-label b{font-size:11px}.user-label span{font-size:9px}}
 .map-controls,.floor-picker{z-index:32}.siraj-fab{z-index:33}.settings-panel{z-index:41}.region-caption{max-width:360px}.region-caption>.row{flex-wrap:wrap}
 
-.building-floor-picker{width:155px;padding:8px;display:flex;flex-direction:column;gap:6px;max-height:none}.building-floor-picker .floor-title{padding:3px;display:flex;justify-content:center;gap:6px}.building-floor-picker select{width:100%;min-height:38px;border:1px solid #dce1d8;border-radius:8px;background:#f9faf4;color:#31594e;font:inherit;font-size:13px;padding:6px;cursor:pointer}.building-floor-picker a{font-size:12px;text-align:center;color:#517a6c;text-decoration:underline}.direction-preview{display:flex;align-items:center;gap:6px;margin:12px 0}.direction-preview span{flex:1;font-size:12px;text-align:center}.direction-preview .secondary{padding:8px 12px}.direction-preview button:disabled{opacity:.35;cursor:default}@media(max-width:760px){.building-floor-picker{width:122px;right:12px;left:auto}.building-floor-picker select{font-size:12px;min-height:34px}.building-floor-picker .floor-title span{display:none}.building-floor-picker .floor-title{padding:0}.building-floor-picker a{font-size:11px}.siraj-fab{top:332px}.turn-banner{right:145px;left:16px;top:258px}}
+.building-floor-picker{width:155px;padding:8px;display:flex;flex-direction:column;gap:6px;max-height:none}.building-floor-picker .floor-title{padding:3px;display:flex;justify-content:center;gap:6px}.building-floor-picker select{width:100%;min-height:38px;border:1px solid #dce1d8;border-radius:8px;background:#f9faf4;color:#31594e;font:inherit;font-size:13px;padding:6px;cursor:pointer}.building-floor-picker a{font-size:12px;text-align:center;color:#517a6c;text-decoration:underline}.direction-preview{display:flex;align-items:center;gap:6px;margin:12px 0}.direction-preview span{flex:1;font-size:12px;text-align:center}.direction-preview .secondary{padding:8px 12px}.direction-preview button:disabled{opacity:.35;cursor:default}@media(max-width:760px){.building-floor-picker{width:122px;right:12px;left:auto}.building-floor-picker select{font-size:12px;min-height:34px}.building-floor-picker .floor-title span{display:none}.building-floor-picker .floor-title{padding:0}.building-floor-picker a{font-size:11px}}
+
+/* ---- Tab-based reorganization: Home/Explore/Rituals screens + Ask/Settings
+   overlays + bottom tab bar, replacing the old always-visible fullscreen map
+   with ~14 floating panels. Overrides below win over the rules above them
+   (same specificity, later in the cascade) for every class that survives
+   but moves from "floating over a fullscreen map" to "living in the new
+   layout"; classes with no surviving element (.journey-panel, .panel-*,
+   .services-dock, .category-*, .siraj-toggle, .siraj-panel, .settings-panel,
+   .map-quick-actions, .your-location, .map-badge, .map-gesture,
+   .campus-label, .mobile-handle, .mobile-summary) are simply never matched
+   again and are left as-is rather than hunted through the dense rules above. */
+.workspace{display:block;height:100dvh;overflow:auto;padding-bottom:78px}
+.map-surface{position:relative;overflow:visible;display:flex;flex-direction:column;gap:14px;max-width:640px;margin:0 auto;padding:16px}
+.home-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.brand-row{display:flex;align-items:center;gap:8px;color:#526d56}
+.brand-row strong{display:block;font-size:15px;font-weight:600;color:#2b3b2f}
+.brand-row small{display:block;font-size:11px;color:#8b947e;margin-top:2px}
+.lost-trigger{width:36px;height:36px;border-radius:50%;background:#fffefa;border:1px solid #dedfd3;display:grid;place-items:center;color:#6d876e;flex-shrink:0}
+.map-search{position:static;width:100%;z-index:auto}
+.map-card{position:relative;height:340px;border-radius:16px;background:#e7e7dd;border:1px solid #dedfd3;overflow:visible}
+.map-card .canvas-container{position:absolute;inset:0;border-radius:16px;overflow:hidden}
+.map-card .loading{border-radius:16px}
+.map-card .region-navigation{position:absolute;top:8px;inset-inline:8px;max-width:none;margin-inline:0;padding:3px;border-radius:10px}
+.map-card .region-navigation button{padding:7px 9px;font-size:11px;min-height:34px}
+.map-card .region-disclaimer{display:none}
+.map-card .region-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:calc(100% - 16px);max-width:320px;min-width:0;padding:10px 12px;bottom:8px}
+.map-card .region-caption>strong{font-size:16px}
+.map-card .floor-picker,.map-card .building-floor-picker{position:absolute;top:52px;inset-inline-end:8px;inset-inline-start:auto;width:120px}
+.map-card .map-controls{position:absolute;bottom:8px;inset-inline-end:8px;top:auto}
+.map-card .map-controls button{width:36px;height:36px}
+.map-card .picking-banner{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:40}
+.turn-banner{position:static;max-width:none;margin:0;inset-inline:auto}
+.lost-card,.selected-card{position:static;transform:none;width:100%;max-width:none;margin:0}
+.home-stepper{display:flex;flex-direction:column;gap:6px}
+.stepper-track{height:5px;border-radius:3px;background:#dde5d1;overflow:hidden}
+.stepper-track>i{display:block;height:100%;background:var(--green);transition:width .2s}
+.home-stepper small{font-size:11px;color:#8b947e}
+.map-attribution{position:static;justify-content:center}
+
+.tab-bar{position:fixed;bottom:0;inset-inline:0;z-index:60;display:flex;align-items:center;justify-content:space-around;background:#fffefa;border-top:1px solid #dedfd3;padding:8px 10px;box-shadow:0 -4px 20px #38423608}
+.tab-bar>button{display:flex;flex-direction:column;align-items:center;gap:3px;color:#8b947e;padding:4px 10px;border-radius:8px;font-size:10px}
+.tab-bar>button.active{color:var(--green)}
+.tab-bar>button.active small{font-weight:600}
+.ask-fab{position:relative;top:-16px;width:52px;height:52px;border-radius:50%;background:var(--gold);color:#3c2f14;display:grid;place-items:center;border:4px solid #fffefa;box-shadow:0 6px 16px #a58c5b40;margin-inline:auto;flex-shrink:0}
+
+.explore-screen{max-width:640px;margin:0 auto;padding:20px 16px 90px}
+.explore-header h1{font-size:19px;font-weight:600;margin:0 0 14px}
+.explore-section{margin-bottom:18px}
+.explore-section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.explore-section-header b{display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;color:#3a5346}
+.explore-more-link{display:flex;align-items:center;gap:3px;font-size:11px;color:#6d876e}
+.explore-nearest{display:flex;align-items:center;gap:6px;font-size:11px;color:#6d876e;padding:8px 0 0}
+
+.rituals-screen{max-width:640px;margin:0 auto;padding:20px 16px 90px}
+.rituals-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+.rituals-header h1{font-size:19px;font-weight:600}
+.hajj-umrah-toggle{display:inline-flex;background:#f1f2e8;border-radius:9px;padding:3px;font-size:12px}
+.hajj-umrah-toggle span{padding:6px 14px;border-radius:7px;color:#a2a697}
+.hajj-umrah-toggle span[aria-disabled="true"]{cursor:not-allowed}
+.hajj-umrah-toggle span.on{background:var(--green);color:#fff;font-weight:600}
+.rituals-ring-wrap{display:flex;flex-direction:column;align-items:center;margin-bottom:20px}
+.rituals-ring-track{stroke:#dfdfcc}
+.rituals-ring-fill{stroke:var(--green)}
+.rituals-ring-kaaba{fill:#2b2b28}
+.rituals-ring-caption{text-align:center;margin-top:6px}
+.rituals-ring-caption b{display:block;font-size:15px}
+.rituals-ring-caption small{color:#8b947e;font-size:12px}
+
+.ask-overlay{position:fixed;inset:0;z-index:70;display:flex;align-items:flex-end;justify-content:center;background:#193a3455;backdrop-filter:blur(3px)}
+.ask-sheet{width:100%;max-width:480px;background:#fffef7;border-radius:20px 20px 0 0;padding:20px;max-height:80dvh;overflow:auto;display:flex;flex-direction:column;gap:12px;box-shadow:0 -10px 40px #17352c30}
+.ask-sheet>.row.between strong{font-size:15px;display:block}
+.ask-sheet>.row.between small{color:#8b947e;font-size:11px;display:block;margin-top:2px}
+.settings-sheet label{display:flex;align-items:center;gap:8px;font-size:12px}
+.settings-sheet input{accent-color:var(--green);width:16px;height:16px}
+.settings-sheet .location-select{display:block}
+.settings-sheet select{display:block;width:100%;margin-top:8px;padding:9px;background:#f5f6eb;border:1px solid #dfe4d3;border-radius:6px;font:inherit;color:#446845}
+.lang-switcher{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;background:#f5f6eb;border:1px solid #dfe4d3;border-radius:8px;color:#587866}
+.lang-switcher select{font:inherit;font-size:13px;background:none;border:0;outline:0;color:#305d4f;cursor:pointer;flex:1}
+
+@media(max-width:700px){.map-card{height:280px}.ask-fab{width:48px;height:48px}.tab-bar>button small{display:none}}
+

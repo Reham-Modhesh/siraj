@@ -245,4 +245,30 @@ export const fa: Record<TranslationKey, string> = {
  'voice.unsupported': 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند · از کادر متن استفاده کنید',
 
  'lang_switcher.aria': 'زبان برنامه',
+
+ 'tabbar.home': 'خانه',
+ 'tabbar.explore': 'کاوش',
+ 'tabbar.rituals': 'مناسک',
+ 'tabbar.settings': 'تنظیمات',
+ 'tabbar.ask_fab_aria': 'از سکینه بپرس',
+
+ 'home.brand_subtitle': 'راهنمای شما در حرم',
+ 'home.lost_button': 'راهم را گم کرده‌ام',
+ 'home.stage_caption': 'مرحله {current} از {total} · {stage}',
+
+ 'explore.section_more': 'بیشتر',
+ 'explore.section_less': 'کمتر',
+ 'explore.header_title': 'کاوش حرم',
+
+ 'rituals.header_title': 'مراحل مناسک',
+ 'rituals.mode_hajj': 'حج',
+ 'rituals.mode_umrah': 'عمره',
+ 'rituals.mode_hajj_unavailable': 'مراحل حج به‌زودی · این نمونه فقط عمره را پوشش می‌دهد',
+ 'rituals.ring_step_of': 'مرحله {current} از {total}',
+
+ 'ask.title': 'از سکینه بپرس',
+ 'ask.subtitle': 'با صدای خود بپرس و پاسخ را هم بشنو',
+ 'ask.close_aria': 'بستن از سکینه بپرس',
+
+ 'settings.region_label': 'منطقه و مناسک',
 }
