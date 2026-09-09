@@ -82,6 +82,8 @@ export const en: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'Choose a demo location',
  'settings.choose_location_placeholder': 'Choose a location…',
  'settings.tap_to_set': 'Tap the map to set your location',
+ 'settings.reset_journey': 'Start a new journey',
+ 'settings.reset_journey_confirm': 'This will clear your current progress and start over. Continue?',
 
  'picking.hint': 'Tap the map to set your location',
  'toast.tap_map_hint': 'Tap the map to pick the nearest demo passage',

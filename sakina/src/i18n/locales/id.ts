@@ -82,6 +82,8 @@ export const id: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'Pilih lokasi demo',
  'settings.choose_location_placeholder': 'Pilih lokasi…',
  'settings.tap_to_set': 'Ketuk peta untuk mengatur lokasi Anda',
+ 'settings.reset_journey': 'Mulai perjalanan baru',
+ 'settings.reset_journey_confirm': 'Ini akan menghapus progres Anda saat ini dan mulai dari awal. Lanjutkan?',
 
  'picking.hint': 'Ketuk peta untuk mengatur lokasi Anda',
  'toast.tap_map_hint': 'Ketuk peta untuk memilih lorong demo terdekat',

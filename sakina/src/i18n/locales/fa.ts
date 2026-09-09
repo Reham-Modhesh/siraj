@@ -82,6 +82,8 @@ export const fa: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'انتخاب مکان نمایشی',
  'settings.choose_location_placeholder': 'یک مکان انتخاب کنید…',
  'settings.tap_to_set': 'برای تعیین موقعیت خود روی نقشه ضربه بزنید',
+ 'settings.reset_journey': 'شروع سفر جدید',
+ 'settings.reset_journey_confirm': 'پیشرفت فعلی شما حذف و از نو شروع می‌شود. ادامه می‌دهید؟',
 
  'picking.hint': 'برای تعیین موقعیت خود روی نقشه ضربه بزنید',
  'toast.tap_map_hint': 'برای انتخاب نزدیک‌ترین گذرگاه نمایشی روی نقشه ضربه بزنید',

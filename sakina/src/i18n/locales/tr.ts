@@ -82,6 +82,8 @@ export const tr: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'Bir demo konum seçin',
  'settings.choose_location_placeholder': 'Bir konum seçin…',
  'settings.tap_to_set': 'Konumunuzu ayarlamak için haritaya dokunun',
+ 'settings.reset_journey': 'Yeni bir yolculuğa başla',
+ 'settings.reset_journey_confirm': 'Bu, mevcut ilerlemenizi silecek ve baştan başlayacaktır. Devam edilsin mi?',
 
  'picking.hint': 'Konumunuzu ayarlamak için haritaya dokunun',
  'toast.tap_map_hint': 'En yakın demo geçidini seçmek için haritaya dokunun',

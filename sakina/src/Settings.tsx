@@ -4,7 +4,7 @@
 // gear icon instead of a corner button. LanguageSwitcher moved to Home's
 // header (a visible icon) instead of living here, so it's not duplicated
 // in two places.
-import {Accessibility, Leaf, Route, MapPin, X} from 'lucide-react'
+import {Accessibility, Leaf, Route, MapPin, RotateCcw, X} from 'lucide-react'
 import {useMap} from './store'
 import {pois, nodes} from './navigation'
 import {regionAt, regionalText, closureByRegion} from './geography'
@@ -31,6 +31,7 @@ export default function Settings({open, onClose, onTapToSet}: {open: boolean; on
      </select>
     </label>
     <button className="secondary w-full" onClick={onTapToSet}><MapPin size={17} />{t('settings.tap_to_set', lang)}</button>
+    <button className="secondary w-full" onClick={() => { if (confirm(t('settings.reset_journey_confirm', lang))) s.resetJourney() }}><RotateCcw size={17} />{t('settings.reset_journey', lang)}</button>
    </div>
   </div>
  )

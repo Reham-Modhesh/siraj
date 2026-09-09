@@ -82,6 +82,8 @@ export const ur: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'ڈیمو مقام منتخب کریں',
  'settings.choose_location_placeholder': 'ایک مقام منتخب کریں…',
  'settings.tap_to_set': 'اپنا مقام سیٹ کرنے کے لیے نقشے پر ٹیپ کریں',
+ 'settings.reset_journey': 'نیا سفر شروع کریں',
+ 'settings.reset_journey_confirm': 'اس سے آپ کی موجودہ پیش رفت مٹ جائے گی اور نئے سرے سے شروع ہوگا۔ جاری رکھیں؟',
 
  'picking.hint': 'اپنا مقام سیٹ کرنے کے لیے نقشے پر ٹیپ کریں',
  'toast.tap_map_hint': 'قریب ترین ڈیمو راستہ منتخب کرنے کے لیے نقشے پر ٹیپ کریں',

@@ -82,6 +82,8 @@ export const fr: Record<TranslationKey, string> = {
  'settings.demo_location_aria': 'Choisir une position de démonstration',
  'settings.choose_location_placeholder': 'Choisissez un lieu…',
  'settings.tap_to_set': 'Touchez la carte pour définir votre position',
+ 'settings.reset_journey': 'Commencer un nouveau voyage',
+ 'settings.reset_journey_confirm': 'Cela effacera votre progression actuelle et repartira de zéro. Continuer ?',
 
  'picking.hint': 'Touchez la carte pour définir votre position',
  'toast.tap_map_hint': 'Touchez la carte pour choisir le passage de démonstration le plus proche',

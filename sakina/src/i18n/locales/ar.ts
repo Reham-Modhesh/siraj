@@ -83,6 +83,8 @@ export const ar = {
  'settings.demo_location_aria': 'اختيار موقع تجريبي',
  'settings.choose_location_placeholder': 'اختر موقعًا…',
  'settings.tap_to_set': 'تعيين موقع بالنقر على الخريطة',
+ 'settings.reset_journey': 'بدء رحلة جديدة',
+ 'settings.reset_journey_confirm': 'سيتم حذف تقدمك الحالي والبدء من جديد. هل تريدين المتابعة؟',
 
  'picking.hint': 'اضغط على الخريطة لتعيين موقعك',
  'toast.tap_map_hint': 'اضغط على الخريطة لاختيار أقرب ممر تجريبي',
