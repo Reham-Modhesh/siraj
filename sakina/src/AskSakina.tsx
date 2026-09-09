@@ -83,18 +83,18 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
  const audioRef = useRef<HTMLAudioElement | null>(null)
 
  const speak = async () => {
-  // Real speech output via Gemini (i18n/tts.py, served through
-  // voice_prototype/server.py's /speak route) - deliberately NOT the
-  // browser's speechSynthesis/OS voices, which are inconsistent across
-  // machines and outright missing for some languages (e.g. Urdu, Persian
-  // have zero installed macOS voices). The translated answer text above
-  // always renders regardless of whether this succeeds.
+  // Real speech output via openai/gpt-audio through OpenRouter (i18n/tts.py,
+  // served through voice_prototype/server.py's /speak route) - deliberately
+  // NOT the browser's speechSynthesis/OS voices, which are inconsistent
+  // across machines and outright missing for some languages (e.g. Urdu,
+  // Persian have zero installed macOS voices). The translated answer text
+  // above always renders regardless of whether this succeeds.
   if (!answer || speaking) return
   setNote('')
   setSpeaking(true)
   try {
    // Prefer the short nav confirmation when one exists - it's what a
-   // real assistant would say out loud, and it comfortably fits Gemini's
+   // real assistant would say out loud, and it comfortably fits the
    // TTS length limit on its own, unlike Siraj's full raw answer.
    const speechText = navSummary || truncateForSpeech(answer)
    const res = await fetch(SIRAJ_SPEAK_ENDPOINT, {

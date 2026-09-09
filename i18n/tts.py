@@ -1,16 +1,28 @@
-"""Text-to-speech via the Gemini API's native audio-output modality.
+"""Text-to-speech via OpenRouter's openai/gpt-audio model (streamed).
 
-Separate from i18n/translate.py's OpenRouter-routed *text* translation -
-audio output isn't a capability OpenRouter's chat-completions endpoint
-exposes for Gemini, so this calls Google's own Generative Language API
-directly and reads its own key, GEMINI_API_KEY (Google AI Studio),
-never OPENROUTER_API_KEY.
+Originally called Gemini's native audio-output modality directly against
+Google's Generative Language API. Switched to OpenRouter's gpt-audio
+(confirmed working with a live streamed request) after Gemini's free-tier
+key hit its rate limit (HTTP 429) with no guaranteed reset time before a
+time-critical demo. This reuses OPENROUTER_API_KEY - the same key
+i18n/translate.py already depends on for text translation - so no
+separate key is needed.
+
+gpt-audio is a chat model, not a pure TTS engine: without instruction it
+answers conversationally ("Sure, I'll say: ...") instead of just reading
+the text. The system prompt below forces verbatim narration - confirmed
+by checking the returned transcript matches the input exactly.
+
+Audio-output responses from this model require stream:true, and under
+streaming the only supported audio.format is pcm16 (not wav) - confirmed
+by testing; the wav-under-streaming combination fails with a 400.
 
 Same caveat tier as i18n/translate.py::OpenRouterTranslator: prototype-
 grade, unreviewed beyond this module's own manual check, and swappable
 behind synthesize_speech()'s signature without touching callers
 (voice_prototype/server.py's /speak route, in turn called by
-sakina/src/AskSakina.tsx's "listen" button) if the provider ever changes.
+sakina/src/AskSakina.tsx's and Home.tsx's "listen" buttons) if the
+provider ever changes again.
 """
 
 import base64
@@ -19,90 +31,95 @@ import os
 import struct
 import urllib.request
 
-_DEFAULT_MODEL = "gemini-2.5-flash-preview-tts"
-_ENDPOINT = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
+_MODEL = "openai/gpt-audio"
+_VOICE = "alloy"
+_ENDPOINT = "https://openrouter.ai/api/v1/chat/completions"
+_SAMPLE_RATE = 24000
 _DEFAULT_TIMEOUT_SECONDS = 30.0
 
-# One prebuilt Gemini voice per language. All currently point at the same
-# general-purpose voice - swap individually once someone has actually
-# listened to per-language quality (see manual check note below).
-_VOICE_BY_LANG = {
-    "ar": "Kore", "en": "Kore", "ur": "Kore", "id": "Kore",
-    "tr": "Kore", "fr": "Kore", "fa": "Kore",
-}
+_SYSTEM_PROMPT = (
+    "You are a text-to-speech engine. Read the user's message aloud "
+    "exactly as written, verbatim, in the same language. Do not add any "
+    "words, commentary, greeting, or acknowledgement of any kind."
+)
 
 
 class TTSError(Exception):
-    """Raised when Gemini speech synthesis can't be reached or returns
-    something this module doesn't know how to turn into audio."""
+    """Raised when speech synthesis can't be reached or returns something
+    this module doesn't know how to turn into audio."""
 
 
 def synthesize_speech(text: str, lang: str) -> bytes:
-    """Return WAV-encoded audio bytes for `text`, spoken in `lang`.
+    """Return WAV-encoded audio bytes for `text`.
 
-    Raises TTSError (never silently returns empty audio) if GEMINI_API_KEY
-    is unset, the request fails, or the response shape is unexpected -
-    callers (voice_prototype/server.py) turn that into a 502 the frontend
-    already knows how to show a clear message for, matching how
-    TranslationError is handled on the /ask route.
+    `lang` isn't used to pick a model/voice - gpt-audio reads whatever
+    language the text itself is written in - it's kept in the signature
+    only so voice_prototype/server.py's /speak route and its callers
+    don't need to change. Raises TTSError (never silently returns empty
+    audio) on any failure - callers turn that into a 502 the frontend
+    already shows a clear message for.
     """
     if not text or not text.strip():
         raise TTSError("No text to speak")
 
-    api_key = os.environ.get("GEMINI_API_KEY")
+    api_key = os.environ.get("OPENROUTER_API_KEY")
     if not api_key:
-        raise TTSError("GEMINI_API_KEY is not set; cannot reach Gemini for speech synthesis.")
+        raise TTSError("OPENROUTER_API_KEY is not set; cannot reach the speech model.")
 
-    model = os.environ.get("GEMINI_TTS_MODEL", _DEFAULT_MODEL)
-    voice = _VOICE_BY_LANG.get(lang, "Kore")
     payload = {
-        "contents": [{"parts": [{"text": text}]}],
-        "generationConfig": {
-            "responseModalities": ["AUDIO"],
-            "speechConfig": {"voiceConfig": {"prebuiltVoiceConfig": {"voiceName": voice}}},
-        },
+        "model": _MODEL,
+        "stream": True,
+        "modalities": ["text", "audio"],
+        "audio": {"voice": _VOICE, "format": "pcm16"},
+        "messages": [
+            {"role": "system", "content": _SYSTEM_PROMPT},
+            {"role": "user", "content": text},
+        ],
     }
-    url = _ENDPOINT.format(model=model) + "?key=" + api_key
     request = urllib.request.Request(
-        url,
+        _ENDPOINT,
         data=json.dumps(payload).encode("utf-8"),
-        headers={"Content-Type": "application/json"},
+        headers={
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {api_key}",
+        },
         method="POST",
     )
+
+    audio_chunks = []
     try:
         with urllib.request.urlopen(request, timeout=_DEFAULT_TIMEOUT_SECONDS) as response:
-            data = json.loads(response.read())
-    except Exception as exc:  # network error, HTTP error, timeout, bad JSON
-        raise TTSError(f"Gemini TTS request failed: {exc}") from exc
+            while True:
+                raw_line = response.readline()
+                if not raw_line:
+                    break
+                line = raw_line.decode("utf-8", errors="ignore").strip()
+                if not line.startswith("data: "):
+                    continue
+                data = line[len("data: "):]
+                if data == "[DONE]":
+                    break
+                try:
+                    event = json.loads(data)
+                except json.JSONDecodeError:
+                    continue
+                delta = (event.get("choices") or [{}])[0].get("delta", {})
+                audio = delta.get("audio")
+                if audio and audio.get("data"):
+                    audio_chunks.append(audio["data"])
+    except Exception as exc:  # network error, HTTP error, timeout
+        raise TTSError(f"Speech request failed: {exc}") from exc
 
-    try:
-        part = data["candidates"][0]["content"]["parts"][0]["inlineData"]
-        audio_b64 = part["data"]
-        mime_type = part.get("mimeType", "audio/L16;rate=24000")
-    except (KeyError, IndexError, TypeError) as exc:
-        raise TTSError(f"Unexpected Gemini TTS response format: {data!r:.500}") from exc
+    if not audio_chunks:
+        raise TTSError("Speech response contained no audio")
 
-    pcm = base64.b64decode(audio_b64)
-    sample_rate = _sample_rate_from_mime(mime_type)
-    return _pcm_to_wav(pcm, sample_rate=sample_rate)
-
-
-def _sample_rate_from_mime(mime_type: str) -> int:
-    # Gemini's audio mimeType looks like "audio/L16;codec=pcm;rate=24000" -
-    # 24000 is the documented default if the rate parameter is missing.
-    for token in mime_type.split(";"):
-        token = token.strip()
-        if token.startswith("rate="):
-            try:
-                return int(token.split("=", 1)[1])
-            except ValueError:
-                pass
-    return 24000
+    pcm = base64.b64decode("".join(audio_chunks))
+    return _pcm_to_wav(pcm, sample_rate=_SAMPLE_RATE)
 
 
 def _pcm_to_wav(pcm: bytes, sample_rate: int, channels: int = 1, bits_per_sample: int = 16) -> bytes:
-    """Gemini returns headerless 16-bit signed little-endian PCM - browsers
-    can't play that directly, so wrap it in a minimal WAV header."""
+    """gpt-audio's pcm16 stream is headerless 16-bit signed little-endian
+    PCM - browsers can't play that directly, so wrap it in a minimal WAV header."""
     byte_rate = sample_rate * channels * bits_per_sample // 8
     block_align = channels * bits_per_sample // 8
     header = b"RIFF" + struct.pack("<I", 36 + len(pcm)) + b"WAVE"

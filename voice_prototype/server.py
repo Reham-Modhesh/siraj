@@ -7,9 +7,9 @@ unchanged. Requires the OPENROUTER_API_KEY environment variable to be set
 (see .env.example) for any non-Arabic language; the API key is read
 server-side only (i18n/translate.py) and is never sent to the browser.
 
-Also serves /speak (i18n/tts.py, Gemini's native audio output) for
-sakina/src/AskSakina.tsx's "listen" button - a separate GEMINI_API_KEY
-env var, since audio output isn't reachable through OpenRouter.
+Also serves /speak (i18n/tts.py, openai/gpt-audio via OpenRouter) for
+the "listen" buttons in sakina/src/AskSakina.tsx and Home.tsx - reuses
+the same OPENROUTER_API_KEY as translation, no separate key needed.
 
 Run:
     python3 voice_prototype/server.py
@@ -105,8 +105,8 @@ class Handler(BaseHTTPRequestHandler):
         })
 
     def _handle_speak(self):
-        # Text-to-speech for the "listen" button (sakina/src/AskSakina.tsx)
-        # - see i18n/tts.py for the Gemini call this wraps. Kept as its own
+        # Text-to-speech for the "listen" buttons (sakina/src/AskSakina.tsx,
+        # Home.tsx) - see i18n/tts.py for the call this wraps. Kept as its own
         # route (not folded into /ask) since the browser's Web Speech API
         # already handles recognition fine; only speech *output* needed a
         # real voice provider once we required languages the OS has none

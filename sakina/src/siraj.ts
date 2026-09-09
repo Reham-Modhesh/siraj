@@ -13,10 +13,12 @@ import type {Category} from './navigation'
 export const SIRAJ_ENDPOINT = 'http://localhost:8787/ask'
 export const SIRAJ_SPEAK_ENDPOINT = 'http://localhost:8787/speak'
 
-// Gemini's TTS model (i18n/tts.py) reliably 503s on longer text - confirmed
-// empirically: ~1140 chars fails every time, ~570 succeeds. Shared by every
-// caller of SIRAJ_SPEAK_ENDPOINT (AskSakina.tsx, Home.tsx's ritual guide) so
-// none of them send a request that's guaranteed to fail.
+// Keeps spoken answers to a reasonable length regardless of which TTS
+// provider i18n/tts.py calls (started with Gemini, now openai/gpt-audio
+// via OpenRouter) - long text costs more, is slower to generate, and has
+// no benefit when the full answer is already shown in writing. Shared by
+// every caller of SIRAJ_SPEAK_ENDPOINT (AskSakina.tsx, Home.tsx's ritual
+// guide).
 const MAX_TTS_CHARS = 700
 export function truncateForSpeech(text: string): string {
   if (text.length <= MAX_TTS_CHARS) return text
