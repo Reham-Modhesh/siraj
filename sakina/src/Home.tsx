@@ -4,9 +4,9 @@
 // Holds a bounded map card instead of a fullscreen map: region switching,
 // floor picking, camera controls, search, turn-by-turn banner and the
 // compact journey stepper all live anchored to that card now.
-import {useMemo, useState, useEffect, useRef, Component} from 'react'
+import {useMemo, useState, useRef, Component} from 'react'
 import type {ReactNode} from 'react'
-import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic, Volume2, Loader2} from 'lucide-react'
+import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, Mic, Volume2, Loader2} from 'lucide-react'
 import Scene from './Scene'
 import RegionNavigator from './RegionNavigator'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -42,7 +42,6 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
  const number = (n: number) => formatNumber(n, lang)
  const [ready, setReady] = useState(false)
  const [query, setQuery] = useState('')
- const [guideOpen, setGuideOpen] = useState(false)
  const destination = pois.find(p => p.id === s.destination)
  const selected = pois.find(p => p.id === s.selected)
  const lostPoint = pois.find(p => p.id === s.lostLandmark)
@@ -61,18 +60,20 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
  // Show the ritual's how-to/story/dhikr (already fully localized in
  // i18n/ritual.ts) the moment the pilgrim actually starts it, instead of
  // leaving it collapsed behind a manual tap they might never notice.
- // Stages 3/4/7 are the actual performing stages (tawaf/prayer/sai);
- // stage 6 ("heading to Safa") still renders the guide as a preview but
- // doesn't force it open since sai hasn't started yet.
- useEffect(() => {
-  if (s.stage === 3 || s.stage === 4 || s.stage === 7) setGuideOpen(true)
- }, [s.stage])
+ // Stages 3/4/7 are the actual performing stages (tawaf/prayer/sai).
  // Derived, not effect-driven: the popup's visibility is a pure function
  // of "are we on a performing stage the user hasn't dismissed yet" - no
  // separate boolean to fall out of sync with stage changes/hydration.
+ // guideManualOpen covers the same modal reopened on demand later (stage
+ // 6's Safa-heading preview included) via the small relink button below,
+ // instead of the old always-expandable inline accordion duplicating it.
  const [dismissedRitualStage, setDismissedRitualStage] = useState<number | null>(null)
- const ritualModalOpen = (s.stage === 3 || s.stage === 4 || s.stage === 7) && dismissedRitualStage !== s.stage
- const closeRitualModal = () => setDismissedRitualStage(s.stage)
+ const [guideManualOpen, setGuideManualOpen] = useState(false)
+ const ritualModalOpen = ((s.stage === 3 || s.stage === 4 || s.stage === 7) && dismissedRitualStage !== s.stage) || guideManualOpen
+ const closeRitualModal = () => {
+  setDismissedRitualStage(s.stage)
+  setGuideManualOpen(false)
+ }
 
  const [guideSpeaking, setGuideSpeaking] = useState(false)
  const guideAudioRef = useRef<HTMLAudioElement | null>(null)
@@ -217,9 +218,8 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
      </div>
     ) : (
      <>
-      <div className="home-stepper">
+      <div className="home-stepper" role="progressbar" aria-valuenow={s.stage + 1} aria-valuemin={1} aria-valuemax={10} aria-label={t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}>
        <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
-       <small>{t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}</small>
       </div>
       {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
       {s.ritual ? (
@@ -253,29 +253,13 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
      </div>
     )}
     {(s.stage === 3 || s.stage === 4 || s.stage === 6 || s.stage === 7) && (
-     <div className="ritual-guide">
-      <button className="guide-heading" onClick={() => setGuideOpen(!guideOpen)}><BookOpen size={19} /><span>{t('guide.about', lang, {type: guideType})}</span>{guideOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button>
-      {guideOpen && (
-       <div className="guide-body">
-        <div className="row between">
-         <h3>{ritualField(guide, 'title', lang)}</h3>
-         <button className="text-button small" onClick={speakGuide} disabled={guideSpeaking} aria-label={t('voice.listen_button', lang)}>
-          {guideSpeaking ? <Loader2 size={14} className="siraj-spin" /> : <Volume2 size={14} />}
-         </button>
-        </div>
-        <p>{ritualField(guide, 'explanation', lang)}</p>
-        <h4>{t('guide.meaning_heading', lang)}</h4>
-        <p>{ritualField(guide, 'story', lang)}</p>
-        <h4>{t('guide.dhikr_heading', lang)}</h4>
-        <blockquote>{guide.dhikr}</blockquote>
-        <p>{ritualField(guide, 'dhikrMeaning', lang)}</p>
-        <p>{ritualField(guide, 'dhikrNote', lang)}</p>
-        <a href={guide.url} target="_blank" rel="noreferrer">{ritualField(guide, 'source', lang)}<ExternalLink size={12} /></a>
-        {'storyUrl' in guide && <a href={String(guide.storyUrl)} target="_blank" rel="noreferrer">{t('guide.hajar_story_link', lang)}<ExternalLink size={12} /></a>}
-       </div>
-      )}
-     </div>
-     )}
+     // Same content as the auto-popup modal (title/how-to/story/dhikr) -
+     // this is just a way back into it once dismissed, not a second copy
+     // of the content sitting expanded on the page at the same time.
+     <button className="guide-relink" onClick={() => setGuideManualOpen(true)}>
+      <BookOpen size={17} /><span>{t('guide.about', lang, {type: guideType})}</span>
+     </button>
+    )}
      </>
     )}
    </div>
