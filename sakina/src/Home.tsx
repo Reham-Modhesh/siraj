@@ -184,6 +184,26 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
      <button onClick={() => {if (s.progress >= 1) s.confirmArrival(destination.id); else {useMap.setState({follow: true}); s.focus(s.position, 2.8)}}} aria-label={t('nav.continue_aria', lang)}>{s.progress >= 1 ? <Check size={19} /> : <LocateFixed size={19} />}</button>
     </div>
    )}
+   {destination && s.route.length > 0 && s.progress >= 1 && !s.ritual && !s.paused && (
+    // Confirming arrival is a frequent, repeated action throughout the
+    // whole journey - the turn-banner above already offers it, but only
+    // under narrow conditions (matching floor/region, nothing selected).
+    // This floating button is fixed to the viewport instead of the page
+    // flow, so confirming never requires hunting for it or scrolling,
+    // regardless of what's shown elsewhere on Home.
+    <button className="confirm-arrival-fab" onClick={() => s.confirmArrival(destination.id)}>
+     <Check size={18} />{t('common.confirm_arrival', lang)}
+    </button>
+   )}
+   {s.ritual && !s.paused && (
+    // Same reasoning as the confirm-arrival FAB above, for the other
+    // repeated confirmation in the journey - completing a tawaf/sai lap
+    // happens up to 14 times total, more often than any single-stage
+    // arrival, so it gets the same always-reachable treatment.
+    <button className="confirm-arrival-fab" onClick={s.completeLap}>
+     <CheckCircle2 size={18} />{t('ritual.complete_lap', lang)}
+    </button>
+   )}
    <div className="home-journey">
     {!s.started && s.stage === 0 && !destination ? (
      // A clean gate before any step-tracking shows up - jumping straight
