@@ -136,6 +136,7 @@ export const en: Record<TranslationKey, string> = {
  'journey.subtitle': 'Step by step, at ease',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} of {total}',
+ 'journey.reset': 'Reset journey',
 
  'ritual_select.label': 'Update your status',
  'ritual_select.aria': 'Current ritual status',
@@ -156,6 +157,7 @@ export const en: Record<TranslationKey, string> = {
  'common.undo': 'Undo',
  'sim.pause_label': 'Pause',
  'ritual.resume_lap': 'Resume the lap',
+ 'ritual.reset_laps': 'Reset laps to zero',
  'ritual.fine_print': "You confirm each lap yourself; the marker's movement is simulated.",
  'ritual.start': 'Start {type}',
  'ritual.type_tawaf': 'Tawaf',
@@ -169,6 +171,7 @@ export const en: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'Distances and crowd levels in this model are simulated',
  'unit.meters': '{value} m',
+ 'unit.km': '{value} km',
 
  'guide.about': 'About {type} and its remembrances',
  'guide.meaning_heading': 'Meaning and story of the ritual',
@@ -227,6 +230,8 @@ export const en: Record<TranslationKey, string> = {
  'toast.ritual_note': "Tracking is simulated · completing laps needs your confirmation",
  'toast.lap_completed': 'Seven laps complete · next destination ready',
  'toast.lap_undone': 'Last lap confirmation undone',
+ 'toast.laps_reset': 'Lap counter reset to zero',
+ 'toast.journey_reset': 'Your journey has been reset from the start',
  'toast.demo_intro': 'Demo: from the Mataf exit to Safa, with a saved stop midway',
 
  'voice.toggle_aria': 'Siraj voice assistant',
@@ -248,4 +253,30 @@ export const en: Record<TranslationKey, string> = {
  'voice.translated_to_arabic_prefix': 'Translated to Arabic:',
 
  'lang_switcher.aria': 'App language',
+
+ 'tabbar.home': 'Home',
+ 'tabbar.explore': 'Explore',
+ 'tabbar.rituals': 'Rituals',
+ 'tabbar.settings': 'Settings',
+ 'tabbar.ask_fab_aria': 'Ask Sakina',
+
+ 'home.brand_subtitle': 'Your guide inside the Haram',
+ 'home.lost_button': "I'm lost",
+ 'home.stage_caption': 'Step {current} of {total} · {stage}',
+
+ 'explore.section_more': 'More',
+ 'explore.section_less': 'Less',
+ 'explore.header_title': 'Explore the Haram',
+
+ 'rituals.header_title': 'Ritual steps',
+ 'rituals.mode_hajj': 'Hajj',
+ 'rituals.mode_umrah': 'Umrah',
+ 'rituals.mode_hajj_unavailable': 'Hajj steps coming soon · this prototype covers Umrah only',
+ 'rituals.ring_step_of': 'Step {current} of {total}',
+
+ 'ask.title': 'Ask Sakina',
+ 'ask.subtitle': 'Ask by voice and get the answer read back to you too',
+ 'ask.close_aria': 'Close Ask Sakina',
+
+ 'settings.region_label': 'Region & rituals',
 }

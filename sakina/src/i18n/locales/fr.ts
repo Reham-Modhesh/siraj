@@ -136,6 +136,7 @@ export const fr: Record<TranslationKey, string> = {
  'journey.subtitle': 'Étape par étape, en toute sérénité',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} sur {total}',
+ 'journey.reset': 'Réinitialiser le parcours',
 
  'ritual_select.label': 'Mettez à jour votre statut',
  'ritual_select.aria': 'Statut rituel actuel',
@@ -156,6 +157,7 @@ export const fr: Record<TranslationKey, string> = {
  'common.undo': 'Annuler',
  'sim.pause_label': 'Pause',
  'ritual.resume_lap': 'Reprendre le tour',
+ 'ritual.reset_laps': 'Réinitialiser les tours à zéro',
  'ritual.fine_print': 'Vous confirmez chaque tour vous-même ; le déplacement du repère est simulé.',
  'ritual.start': 'Commencer {type}',
  'ritual.type_tawaf': 'le Tawaf',
@@ -169,6 +171,7 @@ export const fr: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'Les distances et niveaux de fréquentation de ce modèle sont simulés',
  'unit.meters': '{value} m',
+ 'unit.km': '{value} km',
 
  'guide.about': 'À propos {type} et de ses invocations',
  'guide.meaning_heading': 'Signification et histoire du rite',
@@ -227,6 +230,8 @@ export const fr: Record<TranslationKey, string> = {
  'toast.ritual_note': 'Le suivi est simulé · terminer les tours nécessite votre confirmation',
  'toast.lap_completed': 'Sept tours terminés · prochaine destination prête',
  'toast.lap_undone': 'Confirmation du dernier tour annulée',
+ 'toast.laps_reset': 'Le compteur de tours a été réinitialisé',
+ 'toast.journey_reset': 'Votre parcours a été réinitialisé depuis le début',
  'toast.demo_intro': 'Démo : de la sortie du Mataf à Safa, avec un arrêt enregistré à mi-parcours',
 
  'voice.toggle_aria': 'Assistant vocal Siraj',
@@ -248,4 +253,30 @@ export const fr: Record<TranslationKey, string> = {
  'voice.translated_to_arabic_prefix': 'Traduit en arabe :',
 
  'lang_switcher.aria': "Langue de l'application",
+
+ 'tabbar.home': 'Accueil',
+ 'tabbar.explore': 'Explorer',
+ 'tabbar.rituals': 'Rituels',
+ 'tabbar.settings': 'Réglages',
+ 'tabbar.ask_fab_aria': 'Demander à Sakina',
+
+ 'home.brand_subtitle': 'Votre guide dans le Haram',
+ 'home.lost_button': 'Je suis perdu',
+ 'home.stage_caption': 'Étape {current} sur {total} · {stage}',
+
+ 'explore.section_more': 'Plus',
+ 'explore.section_less': 'Moins',
+ 'explore.header_title': 'Explorer le Haram',
+
+ 'rituals.header_title': 'Étapes des rituels',
+ 'rituals.mode_hajj': 'Hajj',
+ 'rituals.mode_umrah': 'Omra',
+ 'rituals.mode_hajj_unavailable': 'Les étapes du Hajj arrivent bientôt · ce prototype couvre uniquement la Omra',
+ 'rituals.ring_step_of': 'Étape {current} sur {total}',
+
+ 'ask.title': 'Demander à Sakina',
+ 'ask.subtitle': 'Posez votre question à voix haute, la réponse vous sera aussi lue',
+ 'ask.close_aria': 'Fermer Demander à Sakina',
+
+ 'settings.region_label': 'Région et rituels',
 }
