@@ -241,8 +241,11 @@ export const ur: Record<TranslationKey, string> = {
  'voice.asking': 'پوچھا جا رہا ہے…',
  'voice.listen_button': 'سنیں',
  'voice.unmapped_note': 'سراج اس مقام کو جانتا ہے، لیکن موجودہ نقشہ ڈیمو ابھی اسے شامل نہیں کرتا',
- 'voice.error_unreachable': 'سراج تک رسائی نہیں ہو سکی۔ یقینی بنائیں کہ اس کا سرور localhost:8787 پر چل رہا ہے',
+ 'voice.error_unreachable': 'فی الحال سراج تک رسائی نہیں ہو سکی۔ براہ کرم تھوڑی دیر بعد دوبارہ کوشش کریں۔',
  'voice.unsupported': 'آپ کا براؤزر صوتی شناخت سپورٹ نہیں کرتا · ٹیکسٹ باکس استعمال کریں',
+ 'voice.mic_denied': 'مائیکروفون تک رسائی مسترد کر دی گئی۔ براہ کرم مائیکروفون تک رسائی کی اجازت دیں، یا اپنا سوال ٹائپ کریں۔',
+ 'voice.mic_error': 'صوتی شناخت میں مسئلہ ہوا۔ دوبارہ کوشش کریں یا اپنا سوال ٹائپ کریں۔',
+ 'voice.translated_to_arabic_prefix': 'عربی ترجمہ:',
 
  'lang_switcher.aria': 'ایپ کی زبان',
 }

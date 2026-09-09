@@ -3,8 +3,9 @@
 Serves a single page with a microphone button (browser Web Speech API,
 7 languages) and a JSON endpoint that feeds the transcribed question
 through i18n.service.ask_multilingual() - agent/agent.py and tools/* are
-unchanged. Requires `pip install -r requirements.txt` (deep-translator)
-for any non-Arabic language.
+unchanged. Requires the OPENROUTER_API_KEY environment variable to be set
+(see .env.example) for any non-Arabic language; the API key is read
+server-side only (i18n/translate.py) and is never sent to the browser.
 
 Run:
     python3 voice_prototype/server.py
@@ -90,6 +91,7 @@ class Handler(BaseHTTPRequestHandler):
             "categories": result["categories"],
             "tool_calls": result["tool_calls"],
             "lang": result["lang"],
+            "question_ar": result["question_ar"],
         })
 
     def log_message(self, fmt, *args):

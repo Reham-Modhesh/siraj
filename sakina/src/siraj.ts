@@ -44,6 +44,7 @@ export interface SirajResult {
   categories: string[]
   tool_calls: SirajToolCall[]
   lang: string
+  question_ar: string
 }
 
 export type SirajNavResult =

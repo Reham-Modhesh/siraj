@@ -244,8 +244,11 @@ export const ar = {
  'voice.asking': 'جاري السؤال…',
  'voice.listen_button': 'استمع',
  'voice.unmapped_note': 'سراج يعرف هذا الموقع، لكن النموذج التجريبي الحالي للخريطة ما يغطيه بعد',
- 'voice.error_unreachable': 'تعذّر الوصول لسراج. تأكد إن خادمه يعمل على localhost:8787',
+ 'voice.error_unreachable': 'تعذّر الوصول لسراج حاليًا. حاول مرة أخرى بعد قليل.',
  'voice.unsupported': 'متصفحك لا يدعم التعرف الصوتي · استخدم مربع الكتابة',
+ 'voice.mic_denied': 'تم رفض إذن استخدام الميكروفون. يرجى السماح بالوصول للميكروفون، أو اكتب سؤالك بدلاً من ذلك.',
+ 'voice.mic_error': 'حدثت مشكلة في التعرف الصوتي. حاول مرة أخرى أو اكتب سؤالك.',
+ 'voice.translated_to_arabic_prefix': 'الترجمة العربية:',
 
  // LanguageSwitcher.tsx
  'lang_switcher.aria': 'لغة التطبيق',

@@ -241,8 +241,11 @@ export const tr: Record<TranslationKey, string> = {
  'voice.asking': 'Soruluyor…',
  'voice.listen_button': 'Dinle',
  'voice.unmapped_note': 'Siraj bu konumu biliyor, ancak mevcut harita demosu henüz onu kapsamıyor',
- 'voice.error_unreachable': "Siraj'a ulaşılamadı. Sunucusunun localhost:8787'de çalıştığından emin olun",
+ 'voice.error_unreachable': "Siraj'a şu anda ulaşılamadı. Lütfen biraz sonra tekrar deneyin.",
  'voice.unsupported': 'Tarayıcınız ses tanımayı desteklemiyor · metin kutusunu kullanın',
+ 'voice.mic_denied': 'Mikrofon erişimi reddedildi. Lütfen mikrofon erişimine izin verin veya sorunuzu yazın.',
+ 'voice.mic_error': 'Ses tanımada bir sorun oluştu. Lütfen tekrar deneyin veya sorunuzu yazın.',
+ 'voice.translated_to_arabic_prefix': 'Arapçaya çevrildi:',
 
  'lang_switcher.aria': 'Uygulama dili',
 }

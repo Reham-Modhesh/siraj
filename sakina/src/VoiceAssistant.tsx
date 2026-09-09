@@ -28,6 +28,7 @@ export default function VoiceAssistant() {
  const [listening, setListening] = useState(false)
  const [busy, setBusy] = useState(false)
  const [transcript, setTranscript] = useState('')
+ const [questionAr, setQuestionAr] = useState('')
  const [answer, setAnswer] = useState('')
  const [note, setNote] = useState('')
  const [textValue, setTextValue] = useState('')
@@ -36,16 +37,26 @@ export default function VoiceAssistant() {
  const ask = async (question: string) => {
   if (!question.trim()) return
   setTranscript(question)
+  setQuestionAr('')
   setBusy(true)
   setAnswer('')
   setNote('')
   try {
    const result = await askSiraj(question, lang)
+   if (lang !== 'ar') setQuestionAr(result.question_ar)
    setAnswer(result.answer)
-   const nav = resolveSirajNavigation(result)
-   if (nav.type === 'navigate') window.sakinaMap.navigateTo(nav.poiId)
-   else if (nav.type === 'nearest') window.sakinaMap.findNearest(nav.category)
-   else if (nav.type === 'unmapped') setNote(t('voice.unmapped_note', lang))
+   // Map navigation is a best-effort side effect on top of an already-
+   // correct answer - isolated in its own try/catch so a map failure
+   // (e.g. an unexpected bridge/store error) can never wipe out or hide
+   // the answer that's already displayed above.
+   try {
+    const nav = resolveSirajNavigation(result)
+    if (nav.type === 'navigate') window.sakinaMap.navigateTo(nav.poiId)
+    else if (nav.type === 'nearest') window.sakinaMap.findNearest(nav.category)
+    else if (nav.type === 'unmapped') setNote(t('voice.unmapped_note', lang))
+   } catch {
+    setNote(t('voice.unmapped_note', lang))
+   }
   } catch {
    setAnswer(t('voice.error_unreachable', lang))
   } finally {
@@ -79,13 +90,19 @@ export default function VoiceAssistant() {
   recognition.lang = SPEECH_LOCALE[lang] || 'ar-SA'
   recognition.interimResults = true
   recognition.maxAlternatives = 1
-  recognition.onstart = () => setListening(true)
+  recognition.onstart = () => {
+   setListening(true)
+   setNote('')
+  }
   recognition.onresult = (event: any) => {
    let final = ''
    for (let i = event.resultIndex; i < event.results.length; i++) if (event.results[i].isFinal) final += event.results[i][0].transcript
    if (final) ask(final.trim())
   }
-  recognition.onerror = () => setListening(false)
+  recognition.onerror = (event: any) => {
+   setListening(false)
+   setNote(event?.error === 'not-allowed' ? t('voice.mic_denied', lang) : t('voice.mic_error', lang))
+  }
   recognition.onend = () => setListening(false)
   recognition.start()
  }
@@ -147,6 +164,11 @@ export default function VoiceAssistant() {
       </div>
      )}
      {transcript && <div className="siraj-transcript">{transcript}</div>}
+     {questionAr && (
+      <small className="siraj-note">
+       {t('voice.translated_to_arabic_prefix', lang)} {questionAr}
+      </small>
+     )}
      {answer && (
       <div className="siraj-answer">
        <p>{answer}</p>

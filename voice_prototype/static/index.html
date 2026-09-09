@@ -132,6 +132,7 @@
 
 <div class="panel">
   <div id="transcript" class="transcript"></div>
+  <div id="questionAr" class="hint"></div>
 
   <div id="answerCard" class="answer-card">
     <div class="meta-row">
@@ -156,6 +157,7 @@ const micBtn = document.getElementById('micBtn');
 const pulse = document.getElementById('pulse');
 const statusEl = document.getElementById('status');
 const transcriptEl = document.getElementById('transcript');
+const questionArEl = document.getElementById('questionAr');
 const answerCard = document.getElementById('answerCard');
 const answerText = document.getElementById('answerText');
 const badgesEl = document.getElementById('badges');
@@ -181,6 +183,7 @@ function currentLang(){ return langSelect.value; }
 async function askSiraj(question){
   if(!question) return;
   transcriptEl.textContent = question;
+  questionArEl.textContent = '';
   statusEl.textContent = 'جاري البحث…';
   statusEl.classList.remove('listening');
   try{
@@ -193,15 +196,16 @@ async function askSiraj(question){
     if(data.error){
       const msg = data.error === 'translation_unavailable'
         ? 'خدمة الترجمة غير متاحة حاليًا — جرّب لاحقًا أو بدّل للعربية'
-        : 'صار خطأ: ' + data.error;
+        : 'تعذّر الحصول على إجابة الآن، حاول مرة أخرى.';
       showAnswer(msg, []);
     } else {
+      if(currentLang() !== 'ar' && data.question_ar) questionArEl.textContent = 'الترجمة العربية: ' + data.question_ar;
       showAnswer(data.answer, data.categories || []);
     }
     statusEl.textContent = 'اضغط الميكروفون وابدأ الكلام';
   } catch(err){
     statusEl.textContent = 'تعذّر الوصول للخادم المحلي';
-    showAnswer('تأكد إن server.py شغّال على localhost:8787', []);
+    showAnswer('تعذّر الوصول إلى سراج الآن، تأكد من تشغيل الخادم المحلي وحاول مرة أخرى.', []);
   }
 }
 

@@ -1,10 +1,12 @@
 """Terminology QA support - NOT a translation engine.
 
-deep-translator has no glossary/terminology-enforcement hook, so this list
-is not applied automatically anywhere in the translation pipeline. It
-exists so a human reviewer can systematically check that these
-Hajj/Umrah-specific terms come back correctly across all 7 supported
-languages before the multilingual feature is trusted in production - see
+The OpenRouter/Gemini translation prompt (see i18n/translate.py) instructs
+the model to preserve ritual terminology, but there is no automated
+glossary-enforcement hook checking that it actually did - this list is not
+applied automatically anywhere in the translation pipeline. It exists so a
+human reviewer can systematically check that these Hajj/Umrah-specific
+terms come back correctly across all 7 supported languages before the
+multilingual feature is trusted in production - see
 tests/manual_terminology_check.md and
 tests/manual_live_translation_check.py, which both consume this list.
 
