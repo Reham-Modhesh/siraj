@@ -41,6 +41,7 @@ export function truncateForSpeech(text: string): string {
 export const SIRAJ_TO_SAKINA_POI: Record<string, string> = {
   'MCH-LMK-003': 'clock-tower', // Existing Siraj dataset: Abraj Al Bait
   'MCH-CORE-001': 'kaaba', // الكعبة المشرفة / المطاف
+  'MCH-CORE-002': 'mataf', // الحجر الأسود - في زاوية الكعبة عند المطاف، لا نقطة مستقلة في سكينة
   'MCH-CORE-003': 'maqam', // مقام إبراهيم
   'MCH-CORE-004': 'safa', // جبل الصفا
   'MCH-CORE-005': 'marwa', // جبل المروة
@@ -49,12 +50,20 @@ export const SIRAJ_TO_SAKINA_POI: Record<string, string> = {
 }
 
 // Siraj `category` field (free text) substring -> Sakina Category, used
-// with findNearest() when there's no single exact POI to jump to.
+// with findNearest() when there's no single exact POI to jump to. Siraj's
+// dataset has 27 named gates (5 main + 22 historical/secondary) and 8
+// accessibility entries, none with a 1:1 Sakina counterpart of their own
+// (Sakina only models a handful of generic gate/accessible POIs) - these
+// two fallbacks are what stop the large majority of "أين باب ...؟" and
+// accessibility questions from reporting unmapped, by pointing at the
+// nearest gate/accessible-prayer-area Sakina actually has instead.
 export const SIRAJ_CATEGORY_FALLBACK: [string, Category][] = [
   ['دورات مياه', 'toilet'],
   ['إسعاف', 'medical'],
   ['مصاعد', 'elevator'],
   ['عربات', 'cart'],
+  ['بوابة', 'gate'],
+  ['إمكانية وصول', 'accessible'],
 ]
 
 export interface SirajToolCall {
