@@ -1,0 +1,6 @@
+import {Layers} from 'lucide-react'
+import {useMap} from './store'
+import {haramLevels,buildingFor,buildingNames,levelUI,OFFICIAL_MAP} from './levels'
+import {regionAt,regionConfig} from './geography'
+import {floorName,t} from './i18n/index'
+export default function FloorPicker(){const s=useMap(),r=s.region==='overview'?regionAt(s.position):s.region,building=buildingFor(s.floor);const options=r==='haram'?haramLevels.filter(l=>l.building===building):haramLevels.filter(l=>regionConfig(r).floors.includes(l.id));return <div className="floor-picker building-floor-picker"><div className="floor-title"><Layers size={16}/><span>{t('floor.title',s.lang)}</span></div>{r==='haram'&&<select aria-label={levelUI.building[s.lang]} value={building} onChange={e=>s.setFloor(e.target.value==='masaa'?3:0)}>{(['riwaq','masaa'] as const).map(id=><option key={id} value={id}>{buildingNames[id][s.lang]}</option>)}</select>}<select aria-label={t('floor.title',s.lang)} value={s.floor} onChange={e=>s.setFloor(Number(e.target.value))}>{options.map(l=><option key={l.id} value={l.id}>{r==='haram'?l.names[s.lang]:floorName(l.id,s.lang)}</option>)}</select>{r==='haram'&&<a href={OFFICIAL_MAP} target="_blank" rel="noreferrer">{levelUI.source[s.lang]} ↗</a>}</div>}

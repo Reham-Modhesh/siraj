@@ -15,6 +15,7 @@ export const SIRAJ_ENDPOINT = 'http://localhost:8787/ask'
 // Siraj location_id -> Sakina POI id, for the handful of places that
 // genuinely exist in both datasets.
 export const SIRAJ_TO_SAKINA_POI: Record<string, string> = {
+  'MCH-LMK-003': 'clock-tower', // Existing Siraj dataset: Abraj Al Bait
   'MCH-CORE-001': 'kaaba', // الكعبة المشرفة / المطاف
   'MCH-CORE-003': 'maqam', // مقام إبراهيم
   'MCH-CORE-004': 'safa', // جبل الصفا

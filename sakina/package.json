@@ -7,7 +7,7 @@
     "dev": "vite --host 0.0.0.0",
     "build": "tsc -b && vite build",
     "preview": "vite preview --host 0.0.0.0",
-    "test": "node --import tsx --test src/navigation.test.ts src/siraj.test.ts"
+    "test": "node --import tsx --test src/navigation.test.ts src/siraj.test.ts src/i18n.test.ts src/regions.test.ts src/geometry.test.ts"
   },
   "dependencies": {
     "@fontsource/ibm-plex-sans-arabic": "^5.3.0",

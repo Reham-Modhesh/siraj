@@ -1,3 +1,5 @@
+import {levelPOINames,levelLabel,haramLevels} from '../levels'
+import {regionalPOINames,regionNames} from '../geography'
 // Display-name/description tables keyed by the EXISTING ids from
 // navigation.ts (pois/stages/floors/categories/node names are never
 // modified - only looked up here for translation).
@@ -15,6 +17,8 @@ import type {Lang} from './types'
 type LangMap = Record<Lang, string>
 
 const POI_NAMES: Record<string, LangMap> = {
+ ...regionalPOINames,
+ ...levelPOINames,
  kaaba: {ar: 'الكعبة المشرفة', en: 'The Holy Kaaba', ur: 'خانہ کعبہ', id: 'Kakbah yang Mulia', tr: 'Kutsal Kâbe', fr: 'La Sainte Kaaba', fa: 'کعبه معظمه'},
  mataf: {ar: 'صحن المطاف', en: 'Mataf Courtyard', ur: 'صحنِ مطاف', id: 'Halaman Mataf', tr: 'Mataf Avlusu', fr: 'Cour du Mataf', fa: 'صحن مطاف'},
  'tawaf-start': {ar: 'بداية الطواف', en: 'Tawaf Starting Point', ur: 'طواف کا آغاز', id: 'Titik Awal Tawaf', tr: 'Tavaf Başlangıcı', fr: 'Point de départ du Tawaf', fa: 'نقطه شروع طواف'},
@@ -22,7 +26,7 @@ const POI_NAMES: Record<string, LangMap> = {
  maqam: {ar: 'مقام إبراهيم', en: 'Maqam Ibrahim', ur: 'مقامِ ابراہیم', id: 'Maqam Ibrahim', tr: 'İbrahim Makamı', fr: "Station d'Abraham", fa: 'مقام ابراهیم'},
  safa: {ar: 'الصفا', en: 'Safa', ur: 'صفا', id: 'Safa', tr: 'Safa', fr: 'Safa', fa: 'صفا'},
  marwa: {ar: 'المروة', en: 'Marwah', ur: 'مروہ', id: 'Marwah', tr: 'Merve', fr: 'Marwah', fa: 'مروه'},
- 'gate-fahd': {ar: 'باب الملك فهد', en: 'King Fahd Gate', ur: 'شاہ فہد گیٹ', id: 'Gerbang Raja Fahd', tr: 'Kral Fahd Kapısı', fr: 'Porte du Roi Fahd', fa: 'دروازه ملک فهد'},
+ 'gate-fahd': {ar: 'باب الملك فهد · 79', en: 'King Fahd Gate · 79', ur: 'شاہ فہد گیٹ · 79', id: 'Gerbang Raja Fahd · 79', tr: 'Kral Fahd Kapısı · 79', fr: 'Porte du Roi Fahd · 79', fa: 'دروازه ملک فهد · 79'},
  exit: {ar: 'باب المروة · مخرج', en: 'Marwah Gate · Exit', ur: 'باب مروہ · خروجی', id: 'Gerbang Marwah · Keluar', tr: 'Merve Kapısı · Çıkış', fr: 'Porte de Marwah · Sortie', fa: 'دروازه مروه · خروجی'},
  'mataf-exit': {ar: 'مخرج المطاف', en: 'Mataf Exit', ur: 'مطاف کا خروجی راستہ', id: 'Keluar Mataf', tr: 'Mataf Çıkışı', fr: 'Sortie du Mataf', fa: 'خروجی مطاف'},
  zamzam: {ar: 'ماء زمزم', en: 'Zamzam Water', ur: 'آبِ زمزم', id: 'Air Zamzam', tr: 'Zemzem Suyu', fr: 'Eau de Zamzam', fa: 'آب زمزم'},
@@ -72,10 +76,11 @@ const STAGE_HINTS: LangMap[] = [
 ]
 
 const FLOOR_NAMES: Record<number, LangMap> = {
+ ...Object.fromEntries(haramLevels.map(l=>[l.id,l.names])),
  0: {ar: 'الدور الأرضي', en: 'Ground Floor', ur: 'گراؤنڈ فلور', id: 'Lantai Dasar', tr: 'Zemin Kat', fr: 'Rez-de-chaussée', fa: 'طبقه همکف'},
  1: {ar: 'الدور الأول', en: 'First Floor', ur: 'پہلی منزل', id: 'Lantai 1', tr: '1. Kat', fr: 'Premier étage', fa: 'طبقه اول'},
  2: {ar: 'السطح', en: 'Roof', ur: 'چھت', id: 'Atap', tr: 'Çatı', fr: 'Toit', fa: 'پشت‌بام'},
- 3: {ar: 'مستوى المسعى', en: "Sa'i Level", ur: 'سعی کی سطح', id: "Lantai Sa'i", tr: "Sa'y Katı", fr: "Niveau du Sa'i", fa: 'سطح سعی'},
+ 3: {ar: 'المسعى · الأرضي', en: "Sa’i · Ground", ur: 'مسعی · گراؤنڈ', id: 'Sa’i · Dasar', tr: 'Sa’y · Zemin', fr: 'Sa’i · Rez-de-chaussée', fa: 'مسعی · همکف'},
 }
 
 const CATEGORY_NAMES: Record<Category, LangMap> = {
@@ -131,6 +136,7 @@ export function stageHint(i: number, lang: Lang): string {
 }
 
 export function floorName(id: number, lang: Lang): string {
+ if (id>=3) return levelLabel(id,lang)
  const entry = FLOOR_NAMES[id]
  if (!entry) return ''
  if (!entry[lang]) fallbackWarn('floor', id, lang)
@@ -145,7 +151,7 @@ export function categoryName(id: Category, lang: Lang): string {
 }
 
 export function nodeName(arabicName: string, lang: Lang): string {
- const entry = NODE_NAMES[arabicName]
+ const entry = NODE_NAMES[arabicName] ?? Object.values(regionalPOINames).find(n=>n.ar===arabicName) ?? Object.values(regionNames).find(n=>n.ar===arabicName)
  if (!entry) return arabicName
  return entry[lang] ?? entry.ar
 }
