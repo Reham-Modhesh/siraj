@@ -63,14 +63,15 @@
    .campus-label, .mobile-handle, .mobile-summary) are simply never matched
    again and are left as-is rather than hunted through the dense rules above. */
 .workspace{display:block;height:100dvh;overflow:auto;padding-bottom:78px}
-.map-surface{position:relative;overflow:visible;display:flex;flex-direction:column;gap:14px;max-width:640px;margin:0 auto;padding:16px}
+.map-surface{position:relative;overflow:visible;display:flex;flex-direction:column;gap:14px;max-width:640px;height:100%;margin:0 auto;padding:16px}
+.map-surface .map-card{flex:1;min-height:280px;height:auto}
 .home-header{display:flex;align-items:center;justify-content:space-between;gap:10px}
 .brand-row{display:flex;align-items:center;gap:8px;color:#526d56}
 .brand-row strong{display:block;font-size:15px;font-weight:600;color:#2b3b2f}
 .brand-row small{display:block;font-size:11px;color:#8b947e;margin-top:2px}
 .lost-trigger{width:36px;height:36px;border-radius:50%;background:#fffefa;border:1px solid #dedfd3;display:grid;place-items:center;color:#6d876e;flex-shrink:0}
 .map-search{position:static;width:100%;z-index:auto}
-.map-card{position:relative;height:410px;border-radius:16px;background:#e7e7dd;border:1px solid #dedfd3;overflow:visible}
+.map-card{position:relative;height:clamp(410px,72dvh,720px);border-radius:16px;background:#e7e7dd;border:1px solid #dedfd3;overflow:visible}
 .map-card .canvas-container{position:absolute;inset:0;border-radius:16px;overflow:hidden}
 .map-card .loading{border-radius:16px}
 .map-card .region-select{position:absolute;top:8px;inset-inline-start:8px;padding:6px 10px;border-radius:10px}
@@ -83,6 +84,7 @@
 .map-card .picking-banner{position:absolute;top:52px;left:50%;transform:translateX(-50%);z-index:40}
 .turn-banner{position:static;max-width:none;margin:0;inset-inline:auto}
 .lost-card,.selected-card{position:static;transform:none;width:100%;max-width:none;margin:0}
+.home-journey{display:flex;flex-direction:column;gap:14px}
 .home-stepper{display:flex;flex-direction:column;gap:6px}
 .stepper-track{height:5px;border-radius:3px;background:#dde5d1;overflow:hidden}
 .stepper-track>i{display:block;height:100%;background:var(--green);transition:width .2s}
@@ -146,5 +148,20 @@
 .lang-switcher{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;background:#FFFFFF;border:1px solid #FFEEC7;border-radius:8px;color:#587866}
 .lang-switcher select{font:inherit;font-size:13px;background:none;border:0;outline:0;color:#305d4f;cursor:pointer;flex:1}
 
-@media(max-width:700px){.map-card{height:340px}.ask-fab{width:54px;height:54px;top:-16px}.tab-bar>button small{display:none}}
+@media(max-width:700px){.map-card{height:clamp(260px,42dvh,380px)}.ask-fab{width:54px;height:54px;top:-16px}.tab-bar>button small{display:none}}
+.map-surface{gap:10px}
+.home-journey{gap:10px}
+.toast{position:fixed;top:16px;bottom:auto;inset-inline:0;left:auto;right:auto;transform:none;margin-inline:auto;width:fit-content}
+.map-card canvas{touch-action:pan-y}
+.search-mic{display:grid;place-items:center;flex-shrink:0;color:var(--green)}
+.current-stage-card,.navigation-card,.ritual-card{padding:12px}
+.current-stage-card h2,.navigation-card h2{font-size:15px;margin:8px 0 4px}
+.current-stage-card p,.navigation-card p{font-size:11px;margin-bottom:10px}
+.route-stats{gap:16px;margin:4px 0 8px}
+.route-progress{margin-bottom:10px}
+.lap-number{font-size:38px;margin:6px 0 2px}
+.lap-dots{margin:10px 0}
+.resume-card{padding:10px;margin-bottom:0}
+.resume-card p{margin:5px 0 8px}
+.hajj-umrah-toggle,.ritual-status-select{font-size:11px}
 

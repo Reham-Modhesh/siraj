@@ -138,12 +138,6 @@ export const fr: Record<TranslationKey, string> = {
  'journey.stage_count': '{current} sur {total}',
  'journey.reset': 'Réinitialiser le parcours',
 
- 'ritual_select.label': 'Mettez à jour votre statut',
- 'ritual_select.aria': 'Statut rituel actuel',
- 'ritual_select.placeholder': 'Je suis maintenant…',
- 'ritual_select.start_tawaf': 'Je commence le Tawaf',
- 'ritual_select.finished_tawaf': 'Tawaf terminé · 7 tours confirmés',
- 'ritual_select.start_sai': 'Je commence le Sa\'i depuis Safa',
 
  'ritual.tracking_tawaf': 'Suivi du Tawaf',
  'ritual.tracking_sai': "Suivi du Sa'i",
@@ -265,11 +259,9 @@ export const fr: Record<TranslationKey, string> = {
  'explore.section_less': 'Moins',
  'explore.header_title': 'Explorer le Haram',
 
- 'rituals.header_title': 'Étapes des rituels',
  'rituals.mode_hajj': 'Hajj',
  'rituals.mode_umrah': 'Omra',
  'rituals.mode_hajj_unavailable': 'Les étapes du Hajj arrivent bientôt · ce prototype couvre uniquement la Omra',
- 'rituals.ring_step_of': 'Étape {current} sur {total}',
 
  'ask.title': 'Demander à Sakina',
  'ask.subtitle': 'Posez votre question à voix haute, la réponse vous sera aussi lue',

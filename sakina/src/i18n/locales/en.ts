@@ -138,12 +138,6 @@ export const en: Record<TranslationKey, string> = {
  'journey.stage_count': '{current} of {total}',
  'journey.reset': 'Reset journey',
 
- 'ritual_select.label': 'Update your status',
- 'ritual_select.aria': 'Current ritual status',
- 'ritual_select.placeholder': "I'm now…",
- 'ritual_select.start_tawaf': 'Starting Tawaf',
- 'ritual_select.finished_tawaf': 'Finished Tawaf · confirmed 7 laps',
- 'ritual_select.start_sai': "Starting Sa'i from Safa",
 
  'ritual.tracking_tawaf': 'Tracking Tawaf',
  'ritual.tracking_sai': "Tracking Sa'i",
@@ -265,11 +259,9 @@ export const en: Record<TranslationKey, string> = {
  'explore.section_less': 'Less',
  'explore.header_title': 'Explore the Haram',
 
- 'rituals.header_title': 'Ritual steps',
  'rituals.mode_hajj': 'Hajj',
  'rituals.mode_umrah': 'Umrah',
  'rituals.mode_hajj_unavailable': 'Hajj steps coming soon · this prototype covers Umrah only',
- 'rituals.ring_step_of': 'Step {current} of {total}',
 
  'ask.title': 'Ask Sakina',
  'ask.subtitle': 'Ask by voice and get the answer read back to you too',

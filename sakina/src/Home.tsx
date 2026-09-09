@@ -6,15 +6,14 @@
 // compact journey stepper all live anchored to that card now.
 import {useMemo, useState, Component} from 'react'
 import type {ReactNode} from 'react'
-import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle} from 'lucide-react'
+import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic} from 'lucide-react'
 import Scene from './Scene'
 import RegionNavigator from './RegionNavigator'
-import FloorPicker from './FloorPicker'
 import {regionAt, regionNames} from './geography'
 import {levelLabel} from './levels'
 import {useMap, getRemainingMeters} from './store'
-import {pois, stages, nodes, shortestPath, navigationSteps, activeStepIndex, resolveDestination, distance} from './navigation'
-import {t, formatNumber, poiName, stageName, floorName} from './i18n/index'
+import {pois, stages, navigationSteps, activeStepIndex, resolveDestination, distance} from './navigation'
+import {t, formatNumber, poiName, stageName, stageHint, floorName, ritual, ritualField} from './i18n/index'
 
 class MapBoundary extends Component<{children: ReactNode}, {failed: boolean}> {
  state = {failed: false}
@@ -35,12 +34,13 @@ class MapBoundary extends Component<{children: ReactNode}, {failed: boolean}> {
  }
 }
 
-export default function Home({picking, setPicking}: {picking: boolean; setPicking: (v: boolean) => void}) {
+export default function Home({picking, setPicking, onAsk}: {picking: boolean; setPicking: (v: boolean) => void; onAsk: () => void}) {
  const s = useMap()
  const lang = s.lang
  const number = (n: number) => formatNumber(n, lang)
  const [ready, setReady] = useState(false)
  const [query, setQuery] = useState('')
+ const [guideOpen, setGuideOpen] = useState(false)
  const destination = pois.find(p => p.id === s.destination)
  const selected = pois.find(p => p.id === s.selected)
  const lostPoint = pois.find(p => p.id === s.lostLandmark)
@@ -52,7 +52,10 @@ export default function Home({picking, setPicking}: {picking: boolean; setPickin
  const instruction = steps[stepIndex]
  const stepMeters = s.route[stepIndex + 1] ? Math.round(distance(s.position, s.route[stepIndex + 1]) * 2.8) : 0
  const meters = getRemainingMeters()
+ const minutes = Math.max(1, Math.ceil(meters / 70))
  const stage = stages[s.stage]
+ const guide = s.stage === 3 ? ritual.tawaf : s.stage === 4 ? ritual.prayer : ritual.sai
+ const guideType = s.stage === 3 ? t('ritual.type_tawaf', lang) : s.stage === 4 ? t('ritual.type_prayer', lang) : t('ritual.type_sai', lang)
  const cameraAction = (action: string) => window.dispatchEvent(new CustomEvent('sakina-camera', {detail: action}))
  const runSearch = () => {
   if (query.includes('خلص') && query.includes('طواف')) {
@@ -74,11 +77,12 @@ export default function Home({picking, setPicking}: {picking: boolean; setPickin
     <div className="brand-row"><MapPin size={16} /><div><strong>{regionNames[s.region === 'overview' ? regionAt(s.position) : s.region][lang]}</strong><small>{t('home.brand_subtitle', lang)}</small></div></div>
     <button className="lost-trigger" onClick={() => s.lost()} aria-label={t('home.lost_button', lang)}><HelpCircle size={16} /></button>
    </div>
+   <div className="hajj-umrah-toggle"><span aria-disabled="true" title={t('rituals.mode_hajj_unavailable', lang)}>{t('rituals.mode_hajj', lang)}</span><span className="on">{t('rituals.mode_umrah', lang)}</span></div>
    <div className="map-search">
     <div className="search-input">
      <Search size={20} />
      <input aria-label={t('search.aria', lang)} placeholder={t('search.placeholder', lang)} value={query} onChange={e => setQuery(e.target.value)} onKeyDown={e => {if (e.key === 'Enter') runSearch()}} />
-     {query ? <button onClick={() => setQuery('')} aria-label={t('search.clear_aria', lang)}><X size={17} /></button> : <span className="search-key">{t('search.label', lang)}</span>}
+     {query ? <button onClick={() => setQuery('')} aria-label={t('search.clear_aria', lang)}><X size={17} /></button> : <button className="search-mic" onClick={onAsk} aria-label={t('tabbar.ask_fab_aria', lang)}><Mic size={18} /></button>}
     </div>
     {query && (
      <div className="search-results">
@@ -96,7 +100,6 @@ export default function Home({picking, setPicking}: {picking: boolean; setPickin
     </div>
     {!ready && <div className="loading"><Layers size={36} /><strong>{t('loading.title', lang)}</strong><span>{t('loading.subtitle', lang)}</span><i /></div>}
     <RegionNavigator />
-    <FloorPicker />
     <div className="map-controls">
      <button className="compass-control" onClick={() => s.setRegion(s.region)} aria-label={t('controls.reset_camera', lang)}><Compass size={25} /></button>
      <div className="control-group">
@@ -134,9 +137,61 @@ export default function Home({picking, setPicking}: {picking: boolean; setPickin
      <button onClick={() => {if (s.progress >= 1) s.confirmArrival(destination.id); else {useMap.setState({follow: true}); s.focus(s.position, 2.8)}}} aria-label={t('nav.continue_aria', lang)}>{s.progress >= 1 ? <Check size={19} /> : <LocateFixed size={19} />}</button>
     </div>
    )}
-   <div className="home-stepper">
-    <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
-    <small>{t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}</small>
+   <div className="home-journey">
+    <div className="home-stepper">
+     <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
+     <small>{t('home.stage_caption', lang, {current: number(s.stage + 1), total: number(10), stage: stageName(s.stage, lang)})}</small>
+    </div>
+    {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
+    {s.ritual ? (
+     <div className="ritual-card">
+      <div className="row between"><span className="eyebrow">{s.ritual === 'tawaf' ? t('ritual.tracking_tawaf', lang) : t('ritual.tracking_sai', lang)}</span><span className="live-dot">{s.running ? t('sim.running', lang) : t('sim.paused', lang)}</span></div>
+      <div className="lap-number">{number(Math.min(7, (s.ritual === 'tawaf' ? s.tawaf : s.sai) + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
+      <h3>{s.ritual === 'tawaf' ? t('ritual.around_kaaba', lang) : s.sai % 2 === 0 ? t('ritual.safa_to_marwa_full', lang) : t('ritual.marwa_to_safa_full', lang)}</h3>
+      <div className="lap-dots">{Array.from({length: 7}, (_, i) => <span className={i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? 'done' : ''} key={i}>{i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? <Check size={14} /> : number(i + 1)}</span>)}</div>
+      <button className="primary w-full" onClick={s.completeLap}><CheckCircle2 size={17} />{t('ritual.complete_lap', lang)}</button>
+      <div className="row"><button className="text-button" onClick={s.undoLap}><Undo2 size={15} />{t('common.undo', lang)}</button><button className="text-button" onClick={s.running ? s.pause : s.resume}>{s.running ? <Pause size={15} /> : <Play size={15} />} {s.running ? t('sim.pause_label', lang) : t('ritual.resume_lap', lang)}</button></div>
+      <p className="fine-print">{t('ritual.fine_print', lang)}</p>
+     </div>
+    ) : destination && s.route.length > 0 ? (
+     <div className="navigation-card">
+      <div className="row between"><span className="eyebrow">{s.progress >= 1 ? t('nav.arrived_label', lang) : t('nav.current_destination_label', lang)}</span><span className="step-badge"><Navigation size={12} />{t('nav.badge', lang)}</span></div>
+      <h2>{poiName(destination.id, lang)}</h2>
+      <p>{s.preferQuiet ? t('nav.desc_quiet', lang) : s.closed.length ? t('nav.desc_closed', lang) : s.accessible ? t('nav.desc_accessible', lang) : t('nav.desc_default', lang)}</p>
+      <div className="route-stats"><div><strong>{number(meters)}</strong><span>{t('nav.meters_remaining_label', lang)}</span></div><span /><div><strong>{s.progress >= 1 ? number(0) : number(minutes)}</strong><span>{t('nav.minutes_label', lang)}</span></div><Footprints size={25} /></div>
+      <div className="route-progress"><i style={{width: `${s.progress * 100}%`}} /></div>
+      <div className="navigation-buttons">
+       {s.progress >= 1 ? <button className="primary w-full" onClick={() => {if (s.arrived.includes(destination.id) && destination.id === stage.poi) s.completeStage(); else s.confirmArrival(destination.id)}}><Check size={17} />{s.arrived.includes(destination.id) && destination.id === stage.poi ? (s.stage === 4 ? t('nav.prayer_done_continue', lang) : t('nav.stage_done_continue', lang)) : t('common.confirm_arrival', lang)}</button> : <button className="primary w-full" onClick={s.simulate}>{s.running ? <Pause size={16} /> : <Play size={16} />} {s.running ? t('sim.stop', lang) : t('sim.start', lang)}</button>}
+       <button className="secondary" onClick={s.frameRoute} aria-label={t('nav.frame_route_aria', lang)}><Route size={18} /></button>
+      </div>
+     </div>
+    ) : (
+     <div className="current-stage-card">
+      <div className="row between"><span className="eyebrow">{t('summary.next_step', lang)}</span><span className="step-badge">{t('journey.stage_count', lang, {current: number(s.stage + 1), total: number(10)})}</span></div>
+      <h2>{stageName(s.stage, lang)}</h2>
+      <p>{stageHint(s.stage, lang)}</p>
+      <button className="primary w-full" onClick={() => s.navigate(stage.poi)}><Navigation size={17} />{t('common.start_navigation', lang)}</button>
+     </div>
+    )}
+    {(s.stage === 3 || s.stage === 4 || s.stage === 6 || s.stage === 7) && (
+     <div className="ritual-guide">
+      <button className="guide-heading" onClick={() => setGuideOpen(!guideOpen)}><BookOpen size={19} /><span>{t('guide.about', lang, {type: guideType})}</span>{guideOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button>
+      {guideOpen && (
+       <div className="guide-body">
+        <h3>{ritualField(guide, 'title', lang)}</h3>
+        <p>{ritualField(guide, 'explanation', lang)}</p>
+        <h4>{t('guide.meaning_heading', lang)}</h4>
+        <p>{ritualField(guide, 'story', lang)}</p>
+        <h4>{t('guide.dhikr_heading', lang)}</h4>
+        <blockquote>{guide.dhikr}</blockquote>
+        <p>{ritualField(guide, 'dhikrMeaning', lang)}</p>
+        <p>{ritualField(guide, 'dhikrNote', lang)}</p>
+        <a href={guide.url} target="_blank" rel="noreferrer">{ritualField(guide, 'source', lang)}<ExternalLink size={12} /></a>
+        {'storyUrl' in guide && <a href={String(guide.storyUrl)} target="_blank" rel="noreferrer">{t('guide.hajar_story_link', lang)}<ExternalLink size={12} /></a>}
+       </div>
+      )}
+     </div>
+    )}
    </div>
    <div className="map-attribution"><span className="scale-line" /><span>{t('attribution.scale', lang, {value: number(50)})}</span><i />{t('attribution.disclaimer', lang)}</div>
   </section>

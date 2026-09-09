@@ -138,12 +138,6 @@ export const id: Record<TranslationKey, string> = {
  'journey.stage_count': '{current} dari {total}',
  'journey.reset': 'Atur ulang perjalanan',
 
- 'ritual_select.label': 'Perbarui status Anda',
- 'ritual_select.aria': 'Status ibadah saat ini',
- 'ritual_select.placeholder': 'Saya sekarang…',
- 'ritual_select.start_tawaf': 'Memulai Tawaf',
- 'ritual_select.finished_tawaf': 'Tawaf selesai · 7 putaran dikonfirmasi',
- 'ritual_select.start_sai': "Memulai Sa'i dari Safa",
 
  'ritual.tracking_tawaf': 'Pelacakan Tawaf',
  'ritual.tracking_sai': "Pelacakan Sa'i",
@@ -265,11 +259,9 @@ export const id: Record<TranslationKey, string> = {
  'explore.section_less': 'Lebih sedikit',
  'explore.header_title': 'Jelajahi Masjidil Haram',
 
- 'rituals.header_title': 'Langkah manasik',
  'rituals.mode_hajj': 'Haji',
  'rituals.mode_umrah': 'Umrah',
  'rituals.mode_hajj_unavailable': 'Langkah Haji segera hadir · prototipe ini hanya mencakup Umrah',
- 'rituals.ring_step_of': 'Langkah {current} dari {total}',
 
  'ask.title': 'Tanya Sakina',
  'ask.subtitle': 'Tanya dengan suara Anda dan jawabannya juga akan dibacakan',

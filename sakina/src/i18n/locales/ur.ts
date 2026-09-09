@@ -138,12 +138,6 @@ export const ur: Record<TranslationKey, string> = {
  'journey.stage_count': '{total} میں سے {current}',
  'journey.reset': 'سفر ری سیٹ کریں',
 
- 'ritual_select.label': 'اپنی حالت اپ ڈیٹ کریں',
- 'ritual_select.aria': 'موجودہ عبادت کی حالت',
- 'ritual_select.placeholder': 'میں اب…',
- 'ritual_select.start_tawaf': 'طواف شروع کر رہا/رہی ہوں',
- 'ritual_select.finished_tawaf': 'طواف مکمل · 7 چکروں کی تصدیق ہو گئی',
- 'ritual_select.start_sai': 'صفا سے سعی شروع کر رہا/رہی ہوں',
 
  'ritual.tracking_tawaf': 'طواف کی نگرانی',
  'ritual.tracking_sai': 'سعی کی نگرانی',
@@ -265,11 +259,9 @@ export const ur: Record<TranslationKey, string> = {
  'explore.section_less': 'کم',
  'explore.header_title': 'حرم دریافت کریں',
 
- 'rituals.header_title': 'مناسک کے مراحل',
  'rituals.mode_hajj': 'حج',
  'rituals.mode_umrah': 'عمرہ',
  'rituals.mode_hajj_unavailable': 'حج کے مراحل جلد آ رہے ہیں · یہ پروٹو ٹائپ صرف عمرہ کا احاطہ کرتا ہے',
- 'rituals.ring_step_of': 'مرحلہ {current} از {total}',
 
  'ask.title': 'سکینہ سے پوچھیں',
  'ask.subtitle': 'اپنی آواز میں پوچھیں اور جواب بھی سن سکتے ہیں',

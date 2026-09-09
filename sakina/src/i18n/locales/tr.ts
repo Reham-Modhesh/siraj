@@ -138,12 +138,6 @@ export const tr: Record<TranslationKey, string> = {
  'journey.stage_count': '{total} aşamadan {current}.',
  'journey.reset': 'Yolculuğu sıfırla',
 
- 'ritual_select.label': 'Durumunuzu güncelleyin',
- 'ritual_select.aria': 'Mevcut ibadet durumu',
- 'ritual_select.placeholder': 'Şu anda…',
- 'ritual_select.start_tawaf': 'Tavafa başlıyorum',
- 'ritual_select.finished_tawaf': 'Tavaf bitti · 7 tur onaylandı',
- 'ritual_select.start_sai': "Safa'dan sa'ye başlıyorum",
 
  'ritual.tracking_tawaf': 'Tavaf takibi',
  'ritual.tracking_sai': "Sa'y takibi",
@@ -265,11 +259,9 @@ export const tr: Record<TranslationKey, string> = {
  'explore.section_less': 'Daha az',
  'explore.header_title': "Harem'i keşfet",
 
- 'rituals.header_title': 'İbadet adımları',
  'rituals.mode_hajj': 'Hac',
  'rituals.mode_umrah': 'Umre',
  'rituals.mode_hajj_unavailable': 'Hac adımları yakında · bu prototip yalnızca Umre’yi kapsıyor',
- 'rituals.ring_step_of': '{total} adımdan {current}. adım',
 
  'ask.title': "Sakina'ya Sor",
  'ask.subtitle': 'Sesinizle sorun, yanıt da sesli okunsun',

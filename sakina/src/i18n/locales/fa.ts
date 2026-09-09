@@ -138,12 +138,6 @@ export const fa: Record<TranslationKey, string> = {
  'journey.stage_count': '{current} از {total}',
  'journey.reset': 'بازنشانی سفر',
 
- 'ritual_select.label': 'وضعیت خود را به‌روزرسانی کنید',
- 'ritual_select.aria': 'وضعیت فعلی مناسک',
- 'ritual_select.placeholder': 'اکنون من…',
- 'ritual_select.start_tawaf': 'طواف را شروع می‌کنم',
- 'ritual_select.finished_tawaf': 'طواف تمام شد · ۷ دور تأیید شد',
- 'ritual_select.start_sai': 'سعی را از صفا شروع می‌کنم',
 
  'ritual.tracking_tawaf': 'پیگیری طواف',
  'ritual.tracking_sai': 'پیگیری سعی',
@@ -265,11 +259,9 @@ export const fa: Record<TranslationKey, string> = {
  'explore.section_less': 'کمتر',
  'explore.header_title': 'کاوش حرم',
 
- 'rituals.header_title': 'مراحل مناسک',
  'rituals.mode_hajj': 'حج',
  'rituals.mode_umrah': 'عمره',
  'rituals.mode_hajj_unavailable': 'مراحل حج به‌زودی · این نمونه فقط عمره را پوشش می‌دهد',
- 'rituals.ring_step_of': 'مرحله {current} از {total}',
 
  'ask.title': 'از سکینه بپرس',
  'ask.subtitle': 'با صدای خود بپرس و پاسخ را هم بشنو',

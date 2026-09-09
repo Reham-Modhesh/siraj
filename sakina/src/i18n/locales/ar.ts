@@ -139,12 +139,6 @@ export const ar = {
  'journey.stage_count': '{current} من {total}',
  'journey.reset': 'إعادة تعيين الرحلة',
 
- 'ritual_select.label': 'حدّث حالتك',
- 'ritual_select.aria': 'حالة النسك الحالية',
- 'ritual_select.placeholder': 'أنا الآن…',
- 'ritual_select.start_tawaf': 'أبدأ الطواف',
- 'ritual_select.finished_tawaf': 'خلصت الطواف · أكّدت ٧ أشواط',
- 'ritual_select.start_sai': 'أبدأ السعي من الصفا',
 
  'ritual.tracking_tawaf': 'تتبع الطواف',
  'ritual.tracking_sai': 'تتبع السعي',
@@ -273,11 +267,9 @@ export const ar = {
  'explore.header_title': 'استكشاف الحرم',
 
  // Rituals.tsx
- 'rituals.header_title': 'خطوات المناسك',
  'rituals.mode_hajj': 'الحج',
  'rituals.mode_umrah': 'العمرة',
  'rituals.mode_hajj_unavailable': 'خطوات الحج قريبًا · هذا النموذج التجريبي يغطي العمرة فقط',
- 'rituals.ring_step_of': 'الخطوة {current} من {total}',
 
  // AskSakina.tsx (overlay chrome; functional strings reuse voice.*)
  'ask.title': 'اسأل سكينة',
