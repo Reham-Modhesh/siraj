@@ -101,6 +101,60 @@ def test_generic_keyword_does_not_return_unrelated_faq():
     assert result["answer"] == NO_INFO_MESSAGE
 
 
+def test_ihram_timing_question_does_not_return_unrelated_tanim_fatwa():
+    # Live multilingual test caught this: "متى يجب ارتداء الإحرام؟" (when
+    # must Ihram be worn?) used to route to faq and return MCH-FTW-003,
+    # which is about something else entirely (why an Umrah-after-Hajj
+    # pilgrim must exit to Tan'im). The dataset has no record that
+    # actually answers "when should Ihram be worn" - correct behavior is
+    # the fallback, not a tangentially-related fatwa.
+    result = run("Ihram timing (no real answer in dataset)", "متى يجب ارتداء الإحرام؟")
+    assert "faq" in result["categories"]
+    assert result["answer"] == NO_INFO_MESSAGE
+
+
+def test_tawaf_al_ifadah_question_is_routed_and_answered():
+    # Live multilingual test caught this: "ما هو طواف الإفاضة؟" got
+    # categories=[] (routing never even called search_faq) because the
+    # FAQ keyword list only had "الطواف" (with the definite article),
+    # which "طواف الإفاضة" doesn't contain. MCH-FTW-001's answer defines
+    # Tawaf al-Ifadah as one of Hajj's pillars, so this should now route to
+    # faq and actually return that record instead of the empty fallback.
+    result = run("Tawaf al-Ifadah (should be answered)", "ما هو طواف الإفاضة؟")
+    assert result["categories"] == ["faq"]
+    assert result["answer"] != NO_INFO_MESSAGE
+    faq_call = next(c for c in result["tool_calls"] if c["tool"] == "search_faq")
+    assert any(r["question_id"] == "MCH-FTW-001" for r in faq_call["result"])
+
+
+def test_sai_rounds_question_has_no_reliable_answer():
+    # Live multilingual test caught this: "كم عدد أشواط السعي؟" (how many
+    # rounds is Sa'i?) got categories=[] before this fix (missing
+    # routing keyword), which accidentally produced the right final
+    # answer for the wrong reason. Now "السعي" correctly routes this to
+    # faq, and search_faq correctly rejects the only candidate
+    # (MCH-FAQ-019, an unrelated companion-registration question that
+    # only shared the generic words "كم"/"عدد") - the dataset has no
+    # record stating the actual number of Sa'i rounds.
+    result = run("Sa'i rounds (no real answer in dataset)", "كم عدد أشواط السعي؟")
+    assert "faq" in result["categories"]
+    assert result["answer"] == NO_INFO_MESSAGE
+
+
+def test_miqat_location_question_has_no_reliable_answer():
+    # Live multilingual test flagged this for review: "أين الميقات؟"
+    # (where is the Miqat?) routes to faq (correct - "ميقات" is a genuine
+    # ritual keyword) but the dataset has no record that actually states
+    # where a Miqat is - MCH-FTW-001 only mentions the word in passing
+    # while listing Hajj obligations. Confirmed as expected/correct
+    # behavior (not a bug) - Miqat points are geographic/regional and out
+    # of scope for both this FAQ dataset and the Haram-internal locations
+    # dataset.
+    result = run("Miqat location (expected fallback, not a bug)", "أين الميقات؟")
+    assert result["categories"] == ["faq"]
+    assert result["answer"] == NO_INFO_MESSAGE
+
+
 if __name__ == "__main__":
     test_location_question()
     test_location_details_question()
@@ -110,4 +164,8 @@ if __name__ == "__main__":
     test_no_matching_information()
     test_routed_but_no_real_answer()
     test_generic_keyword_does_not_return_unrelated_faq()
+    test_ihram_timing_question_does_not_return_unrelated_tanim_fatwa()
+    test_tawaf_al_ifadah_question_is_routed_and_answered()
+    test_sai_rounds_question_has_no_reliable_answer()
+    test_miqat_location_question_has_no_reliable_answer()
     print("\nAll agent routing tests passed.")

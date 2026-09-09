@@ -1,20 +1,23 @@
-"""MANUAL, NETWORK-REQUIRED - never run this in CI or the automated test
-suite (tests/test_i18n.py is the automated, offline equivalent).
+"""MANUAL, NETWORK-REQUIRED, NEEDS OPENROUTER_API_KEY - never run this in
+CI or the automated test suite (tests/test_i18n.py and
+tests/test_openrouter_translator.py are the automated, offline
+equivalents - they never call OpenRouter).
 
-Exercises the real GoogleFreeTranslator end-to-end for a handful of
-Hajj/Umrah questions - including terminology-heavy ones drawn from
-i18n/glossary.py::KEY_TERMS - so a human reviewer can eyeball actual
-translation quality before the multilingual feature is trusted for
-production. For each question, prints:
+Exercises the real OpenRouterTranslator (google/gemini-2.5-flash-lite, via
+OpenRouter) end-to-end for a handful of Hajj/Umrah questions - including
+terminology-heavy ones drawn from i18n/glossary.py::KEY_TERMS - so a human
+reviewer can eyeball actual translation quality before the multilingual
+feature is trusted for production. For each question, prints:
 
     original question -> Arabic intermediate -> Arabic Siraj answer -> translated final answer
 
-Run by hand (needs `pip install -r requirements.txt` first):
+Run by hand (needs OPENROUTER_API_KEY set - see .env.example):
 
     py -3 tests/manual_live_translation_check.py
 """
 
 import io
+import os
 import sys
 from pathlib import Path
 
@@ -24,7 +27,7 @@ if sys.platform == "win32":
     sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding="utf-8")
 
 from i18n.service import ask_multilingual
-from i18n.translate import GoogleFreeTranslator
+from i18n.translate import OpenRouterTranslator
 
 # (label, lang, question) - mix of generic and terminology-heavy questions,
 # across a spread of the 6 non-Arabic supported languages.
@@ -37,11 +40,18 @@ CASES = [
     ("terminology / fa", "fa", "میقات کجاست؟"),  # "Where is the Miqat?"
     ("terminology / id", "id", "Berapa jumlah putaran Sa'i?"),  # "How many rounds is Sa'i?"
     ("no-match / en", "en", "What's your favorite color?"),
+    # From the OpenRouter integration task: the canonical
+    # English -> Arabic RAG -> English round trip for a lost-pilgrim question.
+    ("services round-trip / en", "en", "Where can I find assistance for lost pilgrims?"),
 ]
 
 
 def main():
-    translator = GoogleFreeTranslator()
+    if not os.environ.get("OPENROUTER_API_KEY"):
+        print("OPENROUTER_API_KEY is not set - see .env.example. Nothing to run.")
+        return
+
+    translator = OpenRouterTranslator()
     for label, lang, question in CASES:
         print("\n" + "=" * 70)
         print(f"[{label}] lang={lang}")

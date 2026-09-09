@@ -240,8 +240,11 @@ export const fa: Record<TranslationKey, string> = {
  'voice.asking': 'در حال پرسیدن…',
  'voice.listen_button': 'شنیدن',
  'voice.unmapped_note': 'سراج این مکان را می‌شناسد، اما نسخه نمایشی فعلی نقشه هنوز آن را پوشش نمی‌دهد',
- 'voice.error_unreachable': 'دسترسی به سراج ممکن نشد. مطمئن شوید سرور آن روی localhost:8787 در حال اجراست',
+ 'voice.error_unreachable': 'در حال حاضر دسترسی به سراج ممکن نشد. لطفاً کمی بعد دوباره امتحان کنید.',
  'voice.unsupported': 'مرورگر شما از تشخیص گفتار پشتیبانی نمی‌کند · از کادر متن استفاده کنید',
+ 'voice.mic_denied': 'دسترسی به میکروفون رد شد. لطفاً دسترسی میکروفون را مجاز کنید یا سؤال خود را تایپ کنید.',
+ 'voice.mic_error': 'مشکلی در تشخیص گفتار رخ داد. لطفاً دوباره امتحان کنید یا سؤال خود را تایپ کنید.',
+ 'voice.translated_to_arabic_prefix': 'ترجمه به عربی:',
 
  'lang_switcher.aria': 'زبان برنامه',
 

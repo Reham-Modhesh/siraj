@@ -18,12 +18,23 @@ _PUNCT = re.compile(r"[^\w\s]", re.UNICODE)
 # Common function words that carry no search signal on their own. Without
 # filtering these, a query like "ماذا أفعل إذا نسيت شوطًا؟" would spuriously
 # match any record containing "إذا" or "في", masking genuine no-match cases.
+#
+# يجب/كم/عدد are modal/interrogative words that recur across almost every
+# FAQ entry regardless of topic (nearly every ruling says something "must"
+# be done; many operational questions start with "how many/what number") -
+# counting them as a "distinct meaningful term" let two completely
+# unrelated questions match on e.g. {"يجب", "الإحرام"} or {"كم", "عدد"}
+# alone. See tests/test_i18n.py / tests/test_agent.py for the false-
+# positive cases this fixed (Ihram-timing question matching an unrelated
+# Tan'im fatwa; a Sa'i-rounds question matching an unrelated
+# companion-registration FAQ).
 _STOPWORDS = {
     "من", "في", "على", "الى", "إلى", "عن", "ما", "ماذا", "هل", "ان", "أن", "إن",
     "لا", "لم", "لن", "كان", "هذا", "هذه", "ذلك", "التي", "الذي", "او", "أو",
     "ثم", "قد", "كل", "بعد", "قبل", "عند", "حتي", "حتى", "لو", "لكن", "غير",
     "بين", "حول", "فوق", "تحت", "انا", "أنا", "هو", "هي", "هم", "انت", "أنت",
     "انتم", "نحن", "سوف", "يكون", "تكون", "افعل", "أفعل", "اذا", "إذا", "يا",
+    "يجب", "كم", "عدد",
     "the", "a", "an", "is", "are", "in", "on", "at", "of", "to", "and", "or",
     "what", "where", "how", "do", "does", "i", "my", "for", "with",
 }

@@ -93,10 +93,62 @@ def test_search_faq_no_false_positive_on_generic_keyword():
     assert results_generic == []
 
 
+def test_search_faq_generic_modal_verb_is_not_enough_evidence():
+    # Found via a live multilingual test (Urdu -> Arabic): "متى يجب ارتداء
+    # الإحرام؟" (when must Ihram be worn?) used to match MCH-FTW-003 (why
+    # someone doing Umrah after Hajj must exit to Tan'im) - a completely
+    # different question - because {"يجب", "الإحرام"} cleared the 2-term
+    # threshold. "يجب" (must/should) recurs in nearly every ruling
+    # regardless of topic, so it's now a stopword and doesn't count as a
+    # meaningful term on its own.
+    results = search_faq("متى يجب ارتداء الإحرام؟")
+    show("search_faq('متى يجب ارتداء الإحرام؟') [expect empty]", results)
+    assert results == []
+
+
+def test_search_faq_finds_ritual_term_without_definite_article():
+    # "طواف الإفاضة" (Tawaf al-Ifadah) is defined (as one of Hajj's
+    # pillars) in MCH-FTW-001's answer text, but the word appears without
+    # the definite article "ال" - confirms the FAQ tool itself can find it
+    # via plain substring matching (the routing-layer fix that makes
+    # agent.agent actually call search_faq for such questions is tested in
+    # tests/test_agent.py).
+    results = search_faq("ما هو طواف الإفاضة؟")
+    show("search_faq('ما هو طواف الإفاضة؟')", results)
+    ids = {r["question_id"] for r in results}
+    assert "MCH-FTW-001" in ids
+
+
+def test_search_faq_no_false_positive_on_generic_count_question():
+    # The dataset has no record stating how many rounds Sa'i has.
+    # MCH-FAQ-019 ("كم عدد المرافقين المسموح بتسجيلهم معًا؟" - an unrelated
+    # question about companion registration limits) used to match via the
+    # generic {"كم", "عدد"} ("how many"/"number") pair, which recurs across
+    # unrelated operational FAQs - now stopworded, same rationale as "يجب".
+    results = search_faq("كم عدد أشواط السعي؟")
+    show("search_faq('كم عدد أشواط السعي؟') [expect empty]", results)
+    assert results == []
+
+
+def test_search_faq_tangential_mention_is_not_enough_for_a_location_question():
+    # MCH-FTW-001 mentions "الميقات" once, in passing, while listing Hajj
+    # obligations - it never states where a Miqat actually is. That single
+    # topical word is not enough distinct-term evidence, so this correctly
+    # stays empty rather than answering a "where" question with a record
+    # that isn't about location at all.
+    results = search_faq("أين الميقات؟")
+    show("search_faq('أين الميقات؟') [expect empty]", results)
+    assert results == []
+
+
 if __name__ == "__main__":
     test_search_locations()
     test_get_location_details()
     test_search_services()
     test_search_faq_known_answer()
     test_search_faq_no_false_positive_on_generic_keyword()
+    test_search_faq_generic_modal_verb_is_not_enough_evidence()
+    test_search_faq_finds_ritual_term_without_definite_article()
+    test_search_faq_no_false_positive_on_generic_count_question()
+    test_search_faq_tangential_mention_is_not_enough_for_a_location_question()
     print("\nAll tool-level smoke tests passed.")

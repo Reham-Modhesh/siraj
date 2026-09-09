@@ -59,12 +59,14 @@ i18n/                   multilingual adapter around agent/ (see below) - agent/t
   glossary.py               terminology QA term list (not enforced automatically)
 
 config.py               paths, search tuning
-requirements.txt        i18n/'s one optional dependency (deep-translator)
+.env.example            OPENROUTER_API_KEY / OPENROUTER_MODEL template (copy to .env, never commit .env)
 tests/
   test_tools.py         tool-level tests
   test_agent.py          router/end-to-end tests
   test_i18n.py            multilingual adapter tests (offline, FakeTranslator)
-  manual_live_translation_check.py   manual, network-required
+  test_openrouter_translator.py  OpenRouterTranslator unit tests (offline, mocked HTTP)
+  manual_live_translation_check.py   manual, network + API key required
+  manual_openrouter_translation_check.py  manual, minimal OpenRouter smoke test
   manual_terminology_check.md          manual QA checklist, not code
 ```
 
@@ -83,20 +85,28 @@ support" below); nothing in `agent/`/`tools/` imports from it.
 
 ## Setup
 
-Core retrieval/routing (`agent/`, `tools/`) has **no external
-dependencies - standard library only**. Multilingual support (`i18n/`,
-see below) is additive and introduces one optional dependency,
-`deep-translator`, needed only when calling `i18n.service.ask_multilingual`
-with a non-Arabic `lang`. Running the original Arabic-only engine
-(`agent.agent.ask`) never requires it.
+The whole project is **standard library only - no `pip install` needed**
+for any of it, including multilingual support (`i18n/` calls OpenRouter
+over `urllib.request`, already in the standard library). Running the
+original Arabic-only engine (`agent.agent.ask`) never needs any
+environment variable either.
+
+Multilingual support (`i18n/`, see below) needs one environment variable
+at runtime - `OPENROUTER_API_KEY` - only when calling
+`i18n.service.ask_multilingual` with a non-Arabic `lang`:
 
 ```bash
+cp .env.example .env   # then fill in OPENROUTER_API_KEY
+# On Windows PowerShell: $env:OPENROUTER_API_KEY = "sk-or-..."
+
 py -3 tests/test_tools.py
 py -3 tests/test_agent.py
+py -3 tests/test_i18n.py                     # offline, no key needed (FakeTranslator)
+py -3 tests/test_openrouter_translator.py    # offline, no key needed (mocked HTTP)
 
-# Optional, only for multilingual support:
-pip install -r requirements.txt
-py -3 tests/test_i18n.py
+# Optional, needs a real OPENROUTER_API_KEY and makes real network calls:
+py -3 tests/manual_openrouter_translation_check.py
+py -3 tests/manual_live_translation_check.py
 ```
 
 ## How routing works (agent/agent.py)
@@ -202,13 +212,24 @@ string is ever translated. This matters because that structured data
 already drives other decisions downstream (e.g. map navigation to the
 nearest matching location).
 
-**Translation provider:** the default `GoogleFreeTranslator`
-(`i18n/translate.py`) uses `deep-translator`'s unofficial, no-API-key
-Google Translate wrapper. It is a **development/prototype provider only**
-- no SLA, can be rate-limited or blocked. The `Translator` protocol
-decouples `i18n/service.py` from any specific provider, so swapping in an
-official one (Google Cloud Translation, Azure Translator, ...) later is a
-new class, not a rewrite.
+**Translation provider:** the default `OpenRouterTranslator`
+(`i18n/translate.py`) calls OpenRouter's chat-completions endpoint
+(`https://openrouter.ai/api/v1/chat/completions`) with model
+`google/gemini-2.5-flash-lite` (`OPENROUTER_MODEL`, overridable),
+authenticated via `OPENROUTER_API_KEY`. It uses `urllib.request` from the
+standard library - no HTTP/SDK dependency was added for this. The model is
+given a strict system prompt that forbids it from answering, interpreting,
+summarizing, or adding/removing information - it is only ever asked to
+translate one string of text (either the incoming question into Arabic, or
+the Arabic answer into the target language) and told to return nothing
+else. Reasoning/thinking is explicitly disabled (`"reasoning": {"enabled":
+false}`) since translation doesn't need it. The `Translator` protocol
+decouples `i18n/service.py` from any specific provider, so swapping to a
+different one later is a new class, not a rewrite. The API key is read
+server-side only (`os.environ["OPENROUTER_API_KEY"]` inside
+`i18n/translate.py`) - never hardcoded, logged, or sent to/read from the
+browser; `voice_prototype/server.py` is the only HTTP-facing consumer and
+it runs entirely server-side.
 
 **Failure behavior:** if translation fails, `ask_multilingual` raises
 `i18n.errors.TranslationError` rather than returning a fabricated or
@@ -221,6 +242,35 @@ all 7 languages before production use - see
 `tests/manual_terminology_check.md` and
 `tests/manual_live_translation_check.py`. This is QA support, not an
 automated translation-quality guarantee.
+
+## Demo: voice + Sakina 3D map
+
+Two servers run side by side; both stay on your machine, and the
+OpenRouter API key never leaves the Python process.
+
+```bash
+# 1. Backend: translation + RAG, serves POST /ask on :8787.
+#    Needs OPENROUTER_API_KEY in .env for non-Arabic languages (copy
+#    .env.example -> .env and fill it in). Arabic works with no key at all.
+py -3 voice_prototype/server.py
+
+# 2. Frontend: Sakina's 3D Haram/journey map, in a second terminal.
+cd sakina
+npm install   # first time only
+npm run dev   # prints the local URL, normally http://localhost:5173
+```
+
+Open the printed Sakina URL in a browser. The floating "سراج" button
+(bottom of the map) opens the voice panel: pick a language, tap the mic
+(or type a question and press Enter), and watch the map navigate when the
+question resolves to a known location (e.g. "Where is Zamzam water?").
+`voice_prototype/static/index.html` (served at `http://localhost:8787`,
+opened automatically when the backend starts) is a second, standalone
+voice UI over the same `/ask` endpoint, without the 3D map.
+
+If the backend isn't running, the voice panel shows a clear "couldn't
+reach Siraj" message instead of crashing; the rest of the map keeps
+working normally.
 
 ## Tests
 
@@ -276,8 +326,8 @@ original single-keyword threshold, since a lone strong keyword (e.g.
 - **Not built here**: frontend, backend/API, auth, persistent database, 3D
   guide, maps, voice - all out of scope for this prototype.
 - **Multilingual support is the one intentional exception** to "no
-  external dependencies": `i18n/` adds `deep-translator` for translation
-  only, isolated from `agent/`/`tools/`. See "Multilingual support" above
-  for the full trade-off (prototype-grade provider, non-deterministic
-  end-to-end behavior for non-Arabic languages, terminology QA still
-  pending human sign-off).
+  external dependencies": `i18n/` calls OpenRouter (an external network
+  service) for translation only, isolated from `agent/`/`tools/`. See
+  "Multilingual support" above for the full trade-off (external network
+  call and non-deterministic end-to-end behavior for non-Arabic languages,
+  terminology QA still pending human sign-off).

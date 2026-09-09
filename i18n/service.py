@@ -30,7 +30,7 @@ def ask_multilingual(question: str, lang: str = "ar", translator: Translator | N
             explicitly by the caller - this function never guesses/detects
             the language.
         translator: injected Translator (used by tests with a fake, or to
-            swap providers); defaults to the shared GoogleFreeTranslator.
+            swap providers); defaults to the shared OpenRouterTranslator.
 
     Returns:
         {"answer": str, "categories": [...], "tool_calls": [...], "lang": lang, "question_ar": str}

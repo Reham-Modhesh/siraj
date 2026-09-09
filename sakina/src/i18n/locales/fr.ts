@@ -240,8 +240,11 @@ export const fr: Record<TranslationKey, string> = {
  'voice.asking': 'Question en cours…',
  'voice.listen_button': 'Écouter',
  'voice.unmapped_note': "Siraj connaît ce lieu, mais la démo actuelle de la carte ne le couvre pas encore",
- 'voice.error_unreachable': 'Impossible de joindre Siraj. Vérifiez que son serveur tourne sur localhost:8787',
+ 'voice.error_unreachable': 'Impossible de joindre Siraj pour le moment. Veuillez réessayer dans un instant.',
  'voice.unsupported': "Votre navigateur ne prend pas en charge la reconnaissance vocale · utilisez le champ de texte",
+ 'voice.mic_denied': "L'accès au microphone a été refusé. Veuillez autoriser l'accès au microphone, ou tapez votre question.",
+ 'voice.mic_error': 'Un problème est survenu avec la reconnaissance vocale. Veuillez réessayer ou taper votre question.',
+ 'voice.translated_to_arabic_prefix': 'Traduit en arabe :',
 
  'lang_switcher.aria': "Langue de l'application",
 

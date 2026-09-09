@@ -240,8 +240,11 @@ export const en: Record<TranslationKey, string> = {
  'voice.asking': 'Asking…',
  'voice.listen_button': 'Listen',
  'voice.unmapped_note': "Siraj knows this location, but the current map demo doesn't cover it yet",
- 'voice.error_unreachable': "Couldn't reach Siraj. Make sure its server is running on localhost:8787",
+ 'voice.error_unreachable': "Couldn't reach Siraj right now. Please try again in a moment.",
  'voice.unsupported': "Your browser doesn't support speech recognition · use the text box",
+ 'voice.mic_denied': 'Microphone access was denied. Please allow microphone access, or type your question instead.',
+ 'voice.mic_error': 'Voice recognition had a problem. Please try again or type your question.',
+ 'voice.translated_to_arabic_prefix': 'Translated to Arabic:',
 
  'lang_switcher.aria': 'App language',
 
