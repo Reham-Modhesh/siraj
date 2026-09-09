@@ -145,7 +145,7 @@
 .settings-sheet input{accent-color:var(--green);width:16px;height:16px}
 .settings-sheet .location-select{display:block}
 .settings-sheet select{display:block;width:100%;margin-top:8px;padding:9px;background:#FFFFFF;border:1px solid #FFEEC7;border-radius:6px;font:inherit;color:#446845}
-.lang-switcher{display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;background:#FFFFFF;border:1px solid #FFEEC7;border-radius:8px;color:#587866}
+.lang-switcher{position:static;display:flex;align-items:center;gap:8px;width:100%;padding:10px 12px;background:#FFFFFF;border:1px solid #FFEEC7;border-radius:8px;color:#587866}
 .lang-switcher select{font:inherit;font-size:13px;background:none;border:0;outline:0;color:#305d4f;cursor:pointer;flex:1}
 
 @media(max-width:700px){.map-card{height:clamp(260px,42dvh,380px)}.ask-fab{width:54px;height:54px;top:-16px}.tab-bar>button small{display:none}}
@@ -164,4 +164,7 @@
 .resume-card{padding:10px;margin-bottom:0}
 .resume-card p{margin:5px 0 8px}
 .hajj-umrah-toggle,.ritual-status-select{font-size:11px}
+.home-header-actions{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.home-header-actions .lang-switcher{position:static;width:auto;padding:6px 9px;height:36px;border-radius:8px}
+.home-header-actions .lang-switcher select{font-size:11px;max-width:70px}
 

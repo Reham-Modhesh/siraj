@@ -9,6 +9,7 @@ import type {ReactNode} from 'react'
 import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic} from 'lucide-react'
 import Scene from './Scene'
 import RegionNavigator from './RegionNavigator'
+import LanguageSwitcher from './LanguageSwitcher'
 import {regionAt, regionNames} from './geography'
 import {levelLabel} from './levels'
 import {useMap, getRemainingMeters} from './store'
@@ -75,7 +76,10 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
   <section className="map-surface" aria-label={t('map.aria', lang)}>
    <div className="home-header">
     <div className="brand-row"><MapPin size={16} /><div><strong>{regionNames[s.region === 'overview' ? regionAt(s.position) : s.region][lang]}</strong><small>{t('home.brand_subtitle', lang)}</small></div></div>
-    <button className="lost-trigger" onClick={() => s.lost()} aria-label={t('home.lost_button', lang)}><HelpCircle size={16} /></button>
+    <div className="home-header-actions">
+     <LanguageSwitcher />
+     <button className="lost-trigger" onClick={() => s.lost()} aria-label={t('home.lost_button', lang)}><HelpCircle size={16} /></button>
+    </div>
    </div>
    <div className="hajj-umrah-toggle"><span aria-disabled="true" title={t('rituals.mode_hajj_unavailable', lang)}>{t('rituals.mode_hajj', lang)}</span><span className="on">{t('rituals.mode_umrah', lang)}</span></div>
    <div className="map-search">

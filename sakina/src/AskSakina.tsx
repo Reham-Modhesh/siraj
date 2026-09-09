@@ -65,14 +65,43 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
   }
  }
 
- const speak = () => {
+ const getVoicesReady = (): Promise<SpeechSynthesisVoice[]> =>
+  new Promise(resolve => {
+   // getVoices() often returns [] on the very first call in a session -
+   // the list loads asynchronously and only the "voiceschanged" event
+   // (or a later call) reflects it. Wait for it once instead of trusting
+   // an empty first read, or every language looks unavailable.
+   const existing = window.speechSynthesis.getVoices()
+   if (existing.length) return resolve(existing)
+   const onReady = () => {
+    window.speechSynthesis.removeEventListener('voiceschanged', onReady)
+    resolve(window.speechSynthesis.getVoices())
+   }
+   window.speechSynthesis.addEventListener('voiceschanged', onReady)
+   setTimeout(onReady, 1200)
+  })
+
+ const speak = async () => {
   // Best-effort add-on only: the translated answer text above always
   // renders regardless of whether the browser/OS has a voice for this
-  // locale - availability and quality vary by system and browser.
+  // locale - availability and quality vary by system and browser. Some
+  // languages (e.g. Urdu, Persian) have zero installed system voices on
+  // many machines, in which case speechSynthesis.speak() just silently
+  // produces no audio - so pick a real voice ourselves and tell the user
+  // plainly when none exists, instead of a confusing silent no-op.
   if (!answer || !('speechSynthesis' in window)) return
+  const target = SPEECH_LOCALE[lang] || 'ar-SA'
+  const primary = target.split('-')[0]
+  const voices = await getVoicesReady()
+  const voice = voices.find(v => v.lang === target) || voices.find(v => v.lang.split('-')[0] === primary)
+  if (!voice) {
+   setNote(t('voice.tts_unavailable', lang))
+   return
+  }
   window.speechSynthesis.cancel()
   const utter = new SpeechSynthesisUtterance(answer)
-  utter.lang = SPEECH_LOCALE[lang] || 'ar-SA'
+  utter.lang = target
+  utter.voice = voice
   window.speechSynthesis.speak(utter)
  }
 
