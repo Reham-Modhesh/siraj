@@ -136,6 +136,7 @@ export const ur: Record<TranslationKey, string> = {
  'journey.subtitle': 'قدم بہ قدم، اطمینان کے ساتھ',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{total} میں سے {current}',
+ 'journey.reset': 'سفر ری سیٹ کریں',
 
  'ritual_select.label': 'اپنی حالت اپ ڈیٹ کریں',
  'ritual_select.aria': 'موجودہ عبادت کی حالت',
@@ -156,6 +157,7 @@ export const ur: Record<TranslationKey, string> = {
  'common.undo': 'واپس لیں',
  'sim.pause_label': 'موقوف',
  'ritual.resume_lap': 'چکر جاری رکھیں',
+ 'ritual.reset_laps': 'چکروں کو صفر پر ری سیٹ کریں',
  'ritual.fine_print': 'آپ خود ہر چکر کی تصدیق کرتے ہیں؛ نشان کی حرکت فرضی ہے۔',
  'ritual.start': '{type} شروع کریں',
  'ritual.type_tawaf': 'طواف',
@@ -169,6 +171,7 @@ export const ur: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'اس ماڈل میں فاصلے اور ہجوم فرضی ہیں',
  'unit.meters': '{value} میٹر',
+ 'unit.km': '{value} کلومیٹر',
 
  'guide.about': '{type} اور اس کے اذکار کے بارے میں',
  'guide.meaning_heading': 'عبادت کا مفہوم اور کہانی',
@@ -227,6 +230,8 @@ export const ur: Record<TranslationKey, string> = {
  'toast.ritual_note': 'نگرانی فرضی ہے · چکر مکمل کرنے کے لیے آپ کی تصدیق درکار ہے',
  'toast.lap_completed': 'سات چکر مکمل · اگلی منزل تیار ہے',
  'toast.lap_undone': 'آخری چکر کی تصدیق واپس لے لی گئی',
+ 'toast.laps_reset': 'چکر کاؤنٹر صفر پر ری سیٹ ہو گیا',
+ 'toast.journey_reset': 'آپ کا سفر شروع سے ری سیٹ ہو گیا',
  'toast.demo_intro': 'ڈیمو: مطاف کے راستے سے صفا تک، درمیان میں ایک محفوظ شدہ رکاوٹ کے ساتھ',
 
  'voice.toggle_aria': 'سراج صوتی اسسٹنٹ',

@@ -136,6 +136,7 @@ export const fr: Record<TranslationKey, string> = {
  'journey.subtitle': 'Étape par étape, en toute sérénité',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} sur {total}',
+ 'journey.reset': 'Réinitialiser le parcours',
 
  'ritual_select.label': 'Mettez à jour votre statut',
  'ritual_select.aria': 'Statut rituel actuel',
@@ -156,6 +157,7 @@ export const fr: Record<TranslationKey, string> = {
  'common.undo': 'Annuler',
  'sim.pause_label': 'Pause',
  'ritual.resume_lap': 'Reprendre le tour',
+ 'ritual.reset_laps': 'Réinitialiser les tours à zéro',
  'ritual.fine_print': 'Vous confirmez chaque tour vous-même ; le déplacement du repère est simulé.',
  'ritual.start': 'Commencer {type}',
  'ritual.type_tawaf': 'le Tawaf',
@@ -169,6 +171,7 @@ export const fr: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'Les distances et niveaux de fréquentation de ce modèle sont simulés',
  'unit.meters': '{value} m',
+ 'unit.km': '{value} km',
 
  'guide.about': 'À propos {type} et de ses invocations',
  'guide.meaning_heading': 'Signification et histoire du rite',
@@ -227,6 +230,8 @@ export const fr: Record<TranslationKey, string> = {
  'toast.ritual_note': 'Le suivi est simulé · terminer les tours nécessite votre confirmation',
  'toast.lap_completed': 'Sept tours terminés · prochaine destination prête',
  'toast.lap_undone': 'Confirmation du dernier tour annulée',
+ 'toast.laps_reset': 'Le compteur de tours a été réinitialisé',
+ 'toast.journey_reset': 'Votre parcours a été réinitialisé depuis le début',
  'toast.demo_intro': 'Démo : de la sortie du Mataf à Safa, avec un arrêt enregistré à mi-parcours',
 
  'voice.toggle_aria': 'Assistant vocal Siraj',

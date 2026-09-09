@@ -136,6 +136,7 @@ export const fa: Record<TranslationKey, string> = {
  'journey.subtitle': 'قدم به قدم، با آرامش',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} از {total}',
+ 'journey.reset': 'بازنشانی سفر',
 
  'ritual_select.label': 'وضعیت خود را به‌روزرسانی کنید',
  'ritual_select.aria': 'وضعیت فعلی مناسک',
@@ -156,6 +157,7 @@ export const fa: Record<TranslationKey, string> = {
  'common.undo': 'برگرداندن',
  'sim.pause_label': 'توقف موقت',
  'ritual.resume_lap': 'ادامه دور',
+ 'ritual.reset_laps': 'بازنشانی دورها به صفر',
  'ritual.fine_print': 'شما خودتان هر دور را تأیید می‌کنید؛ حرکت نشانگر شبیه‌سازی‌شده است.',
  'ritual.start': 'شروع {type}',
  'ritual.type_tawaf': 'طواف',
@@ -169,6 +171,7 @@ export const fa: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'فاصله‌ها و میزان ازدحام در این مدل شبیه‌سازی‌شده است',
  'unit.meters': '{value} متر',
+ 'unit.km': '{value} کیلومتر',
 
  'guide.about': 'درباره {type} و اذکار آن',
  'guide.meaning_heading': 'معنا و داستان این مناسک',
@@ -227,6 +230,8 @@ export const fa: Record<TranslationKey, string> = {
  'toast.ritual_note': 'پیگیری شبیه‌سازی‌شده است · تکمیل دورها نیاز به تأیید شما دارد',
  'toast.lap_completed': 'هفت دور کامل شد · مقصد بعدی آماده است',
  'toast.lap_undone': 'تأیید آخرین دور لغو شد',
+ 'toast.laps_reset': 'شمارشگر دورها به صفر بازنشانی شد',
+ 'toast.journey_reset': 'سفر شما از ابتدا بازنشانی شد',
  'toast.demo_intro': 'نسخه نمایشی: از خروجی مطاف تا صفا، با یک توقف ذخیره‌شده در میانه راه',
 
  'voice.toggle_aria': 'دستیار صوتی سراج',

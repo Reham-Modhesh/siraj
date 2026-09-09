@@ -6,7 +6,7 @@
 // shown but disabled: store.ts only models one Umrah journey today, so this
 // is a visual placeholder, not new logic, and a known gap worth flagging.
 import {useState} from 'react'
-import {Footprints, Navigation, Play, Pause, Check, CheckCircle2, Undo2, RefreshCw, RotateCcw, Route, MapPin, BookOpen, ExternalLink, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, LocateFixed} from 'lucide-react'
+import {Footprints, Navigation, Play, Pause, Check, CheckCircle2, Undo2, RotateCcw, Route, MapPin, BookOpen, ExternalLink, ChevronUp, ChevronDown, ChevronLeft, ChevronRight, LocateFixed} from 'lucide-react'
 import {useMap, getRemainingMeters} from './store'
 import {pois, stages, nodes, shortestPath, navigationSteps, activeStepIndex, distance} from './navigation'
 import {levelUI} from './levels'
@@ -39,6 +39,24 @@ export default function Rituals({goHome}: {goHome: () => void}) {
  }
  const ring = {r: 46, c: 2 * Math.PI * 46}
  const ringOffset = ring.c - (ring.c * (s.stage / 9))
+ const renderLapTracker = (type: 'tawaf' | 'sai') => {
+  const count = type === 'tawaf' ? s.tawaf : s.sai
+  return (
+   <div className="lap-tracker">
+    <div className="row between"><span className="eyebrow">{type === 'tawaf' ? t('ritual.tracking_tawaf', lang) : t('ritual.tracking_sai', lang)}</span><span className="live-dot">{s.running ? t('sim.running', lang) : t('sim.paused', lang)}</span></div>
+    <div className="lap-number">{number(Math.min(7, count + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
+    <h3>{type === 'tawaf' ? t('ritual.around_kaaba', lang) : s.sai % 2 === 0 ? t('ritual.safa_to_marwa_full', lang) : t('ritual.marwa_to_safa_full', lang)}</h3>
+    <div className="lap-dots">{Array.from({length: 7}, (_, i) => <span className={i < count ? 'done' : ''} key={i}>{i < count ? <Check size={14} /> : number(i + 1)}</span>)}</div>
+    <button className="primary w-full" onClick={s.completeLap}><CheckCircle2 size={17} />{t('ritual.complete_lap', lang)}</button>
+    <div className="row">
+     <button className="text-button" onClick={s.undoLap}><Undo2 size={15} />{t('common.undo', lang)}</button>
+     <button className="text-button" onClick={s.running ? s.pause : s.resume}>{s.running ? <Pause size={15} /> : <Play size={15} />} {s.running ? t('sim.pause_label', lang) : t('ritual.resume_lap', lang)}</button>
+     <button className="text-button" onClick={s.resetLaps}><RotateCcw size={15} />{t('ritual.reset_laps', lang)}</button>
+    </div>
+    <p className="fine-print">{t('ritual.fine_print', lang)}</p>
+   </div>
+  )
+ }
  return (
   <section className="rituals-screen">
    <div className="rituals-header">
@@ -53,8 +71,9 @@ export default function Rituals({goHome}: {goHome: () => void}) {
     </svg>
     <div className="rituals-ring-caption"><b>{stageName(s.stage, lang)}</b><small>{t('rituals.ring_step_of', lang, {current: number(s.stage + 1), total: number(10)})}</small></div>
    </div>
+   <button className="text-button small ring-reset" onClick={s.resetJourney}><RotateCcw size={13} />{t('journey.reset', lang)}</button>
 
-   {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
+   {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={16} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="secondary w-full" onClick={s.resume}><Play size={15} />{t('resume.button', lang)}</button></div>}
 
    <div className="journey-status"><span>{t('journey.you_are_now_label', lang)} <b>{stageName(s.stage, lang)}</b></span><small>{t('journey.then_prefix', lang, {stage: stageName(Math.min(9, s.stage + 1), lang)})}</small></div>
    <label className="ritual-status-select">{t('ritual_select.label', lang)}
@@ -66,17 +85,7 @@ export default function Rituals({goHome}: {goHome: () => void}) {
     </select>
    </label>
 
-   {s.ritual ? (
-    <div className="ritual-card">
-     <div className="row between"><span className="eyebrow">{s.ritual === 'tawaf' ? t('ritual.tracking_tawaf', lang) : t('ritual.tracking_sai', lang)}</span><span className="live-dot">{s.running ? t('sim.running', lang) : t('sim.paused', lang)}</span></div>
-     <div className="lap-number">{number(Math.min(7, (s.ritual === 'tawaf' ? s.tawaf : s.sai) + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
-     <h3>{s.ritual === 'tawaf' ? t('ritual.around_kaaba', lang) : s.sai % 2 === 0 ? t('ritual.safa_to_marwa_full', lang) : t('ritual.marwa_to_safa_full', lang)}</h3>
-     <div className="lap-dots">{Array.from({length: 7}, (_, i) => <span className={i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? 'done' : ''} key={i}>{i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? <Check size={14} /> : number(i + 1)}</span>)}</div>
-     <button className="primary w-full" onClick={s.completeLap}><CheckCircle2 size={17} />{t('ritual.complete_lap', lang)}</button>
-     <div className="row"><button className="text-button" onClick={s.undoLap}><Undo2 size={15} />{t('common.undo', lang)}</button><button className="text-button" onClick={s.running ? s.pause : s.resume}>{s.running ? <Pause size={15} /> : <Play size={15} />} {s.running ? t('sim.pause_label', lang) : t('ritual.resume_lap', lang)}</button></div>
-     <p className="fine-print">{t('ritual.fine_print', lang)}</p>
-    </div>
-   ) : destination && s.route.length > 0 ? (
+   {!s.ritual && (destination && s.route.length > 0 ? (
     <div className="navigation-card">
      <div className="row between"><span className="eyebrow">{s.progress >= 1 ? t('nav.arrived_label', lang) : t('nav.current_destination_label', lang)}</span><span className="step-badge"><Navigation size={12} />{t('nav.badge', lang)}</span></div>
      <h2>{poiName(destination.id, lang)}</h2>
@@ -96,7 +105,7 @@ export default function Rituals({goHome}: {goHome: () => void}) {
      <p>{stageHint(s.stage, lang)}</p>
      <button className="primary w-full" onClick={() => {s.navigate(stage.poi); goHome()}}><Navigation size={17} />{t('common.start_navigation', lang)}<Chevron size={17} /></button>
     </div>
-   )}
+   ))}
 
    {destination && !s.ritual && steps.length > 0 && (
     <div className="step-list">
@@ -144,7 +153,7 @@ export default function Rituals({goHome}: {goHome: () => void}) {
       <div key={st.name} className={`timeline-item ${active ? 'current' : ''} ${done ? 'complete' : ''}`}>
        <button className="stage-row" onClick={() => setOpenedStage(open ? null : i)}>
         <span className="stage-number">{done ? <Check size={14} /> : number(i + 1)}</span>
-        <span><strong>{stageName(i, lang)}</strong><small>{done ? t('stage.completed', lang) : active ? t('stage.current', lang) : t('stage.not_started', lang)}</small></span>
+        <span><strong>{stageName(i, lang)}</strong>{(done || active) && <small>{done ? t('stage.completed', lang) : t('stage.current', lang)}</small>}</span>
         {open ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
        </button>
        {open && (
@@ -152,19 +161,14 @@ export default function Rituals({goHome}: {goHome: () => void}) {
          <p>{stageHint(i, lang)}</p>
          <div className="row"><button onClick={() => {s.select(st.poi); goHome()}}><MapPin size={14} />{t('common.view_location', lang)}</button><button onClick={() => {s.navigate(st.poi); goHome()}}><Navigation size={14} />{t('stage.navigate', lang)}</button></div>
          {active && <>
-          <button className="secondary w-full" onClick={() => s.confirmArrival(st.poi)}><Check size={15} />{s.arrived.includes(st.poi) ? t('common.arrival_confirmed', lang) : t('common.confirm_arrival', lang)}</button>
-          {i === 3 || i === 7 ? <button className="primary w-full" onClick={() => {s.startRitual(i === 3 ? 'tawaf' : 'sai'); goHome()}}>{t('ritual.start', lang, {type: i === 3 ? t('ritual.type_tawaf', lang) : t('ritual.type_sai', lang)})}</button> : <button className="primary w-full" onClick={s.completeStage}>{i === 4 ? t('stage.prayer_done_next', lang) : t('stage.confirm_complete', lang)}</button>}
+          {!((i === 3 && s.ritual === 'tawaf') || (i === 7 && s.ritual === 'sai')) && <button className="secondary w-full" onClick={() => s.confirmArrival(st.poi)}><Check size={15} />{s.arrived.includes(st.poi) ? t('common.arrival_confirmed', lang) : t('common.confirm_arrival', lang)}</button>}
+          {i === 3 && s.ritual === 'tawaf' ? renderLapTracker('tawaf') : i === 7 && s.ritual === 'sai' ? renderLapTracker('sai') : i === 3 || i === 7 ? <button className="primary w-full" onClick={() => {s.startRitual(i === 3 ? 'tawaf' : 'sai'); goHome()}}>{t('ritual.start', lang, {type: i === 3 ? t('ritual.type_tawaf', lang) : t('ritual.type_sai', lang)})}</button> : <button className="primary w-full" onClick={s.completeStage}>{i === 4 ? t('stage.prayer_done_next', lang) : t('stage.confirm_complete', lang)}</button>}
          </>}
         </div>
        )}
       </div>
      )
     })}
-   </div>
-   <div className="ritual-shortcuts">
-    <span>{t('shortcuts.title', lang)}</span>
-    <button onClick={() => {s.startRitual('tawaf'); goHome()}}><RefreshCw size={17} />{t('ritual.type_tawaf', lang)} <b>{number(s.tawaf)}{t('ritual.of_seven_suffix', lang)}</b></button>
-    <button onClick={() => {s.startRitual('sai'); goHome()}}><Footprints size={17} />{t('ritual.type_sai', lang)} <b>{number(s.sai)}{t('ritual.of_seven_suffix', lang)}</b></button>
    </div>
   </section>
  )

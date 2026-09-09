@@ -137,6 +137,7 @@ export const ar = {
  'journey.subtitle': 'خطوة بخطوة، بطمأنينة',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} من {total}',
+ 'journey.reset': 'إعادة تعيين الرحلة',
 
  'ritual_select.label': 'حدّث حالتك',
  'ritual_select.aria': 'حالة النسك الحالية',
@@ -157,6 +158,7 @@ export const ar = {
  'common.undo': 'تراجع',
  'sim.pause_label': 'إيقاف مؤقت',
  'ritual.resume_lap': 'استئناف الشوط',
+ 'ritual.reset_laps': 'إعادة الأشواط من الصفر',
  'ritual.fine_print': 'أنت تؤكد إكمال الشوط؛ حركة المؤشر تجريبية.',
  'ritual.start': 'بدء {type}',
  'ritual.type_tawaf': 'الطواف',
@@ -170,6 +172,7 @@ export const ar = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'المسافات والازدحام في هذا النموذج افتراضية',
  'unit.meters': '{value} م',
+ 'unit.km': '{value} كم',
 
  'guide.about': 'عن {type} وأذكاره',
  'guide.meaning_heading': 'معنى الشعيرة وقصتها',
@@ -229,6 +232,8 @@ export const ar = {
  'toast.ritual_note': 'التتبع تجريبي · إكمال الأشواط يحتاج تأكيدك',
  'toast.lap_completed': 'أكملت سبعة أشواط · الوجهة التالية جاهزة',
  'toast.lap_undone': 'تم التراجع عن تأكيد الشوط الأخير',
+ 'toast.laps_reset': 'تمت إعادة عدّاد الأشواط إلى الصفر',
+ 'toast.journey_reset': 'تمت إعادة تعيين رحلتك من البداية',
  'toast.demo_intro': 'الديمو: من مخرج المطاف إلى الصفا، مع توقف محفوظ في منتصف الطريق',
 
  // VoiceAssistant.tsx

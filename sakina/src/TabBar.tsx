@@ -10,25 +10,28 @@ import type {Screen} from './App'
 export default function TabBar({screen, setScreen, onSettings, onAsk}: {screen: Screen; setScreen: (s: Screen) => void; onSettings: () => void; onAsk: () => void}) {
  const lang = useMap().lang
  return (
+  // DOM order is right-to-left in the RTL layout: home, rituals, the
+  // centered ask-fab (auto margins split the remaining space evenly since
+  // it has exactly two buttons on each side), explore, settings.
   <nav className="tab-bar" aria-label={t('tabbar.home', lang)}>
-   <button aria-label={t('tabbar.settings', lang)} onClick={onSettings}>
-    <Settings2 size={20} />
-    <small>{t('tabbar.settings', lang)}</small>
-   </button>
-   <button className={screen === 'explore' ? 'active' : ''} aria-label={t('tabbar.explore', lang)} aria-pressed={screen === 'explore'} onClick={() => setScreen('explore')}>
-    <Search size={20} />
-    <small>{t('tabbar.explore', lang)}</small>
+   <button className={screen === 'home' ? 'active' : ''} aria-label={t('tabbar.home', lang)} aria-pressed={screen === 'home'} onClick={() => setScreen('home')}>
+    <Home size={20} />
+    <small>{t('tabbar.home', lang)}</small>
    </button>
    <button className={screen === 'rituals' ? 'active' : ''} aria-label={t('tabbar.rituals', lang)} aria-pressed={screen === 'rituals'} onClick={() => setScreen('rituals')}>
     <LayoutGrid size={20} />
     <small>{t('tabbar.rituals', lang)}</small>
    </button>
-   <button className={screen === 'home' ? 'active' : ''} aria-label={t('tabbar.home', lang)} aria-pressed={screen === 'home'} onClick={() => setScreen('home')}>
-    <Home size={20} />
-    <small>{t('tabbar.home', lang)}</small>
-   </button>
    <button className="ask-fab" aria-label={t('tabbar.ask_fab_aria', lang)} onClick={onAsk}>
-    <Mic size={20} />
+    <Mic size={24} />
+   </button>
+   <button className={screen === 'explore' ? 'active' : ''} aria-label={t('tabbar.explore', lang)} aria-pressed={screen === 'explore'} onClick={() => setScreen('explore')}>
+    <Search size={20} />
+    <small>{t('tabbar.explore', lang)}</small>
+   </button>
+   <button aria-label={t('tabbar.settings', lang)} onClick={onSettings}>
+    <Settings2 size={20} />
+    <small>{t('tabbar.settings', lang)}</small>
    </button>
   </nav>
  )

@@ -136,6 +136,7 @@ export const id: Record<TranslationKey, string> = {
  'journey.subtitle': 'Langkah demi langkah, dengan tenang',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{current} dari {total}',
+ 'journey.reset': 'Atur ulang perjalanan',
 
  'ritual_select.label': 'Perbarui status Anda',
  'ritual_select.aria': 'Status ibadah saat ini',
@@ -156,6 +157,7 @@ export const id: Record<TranslationKey, string> = {
  'common.undo': 'Batalkan',
  'sim.pause_label': 'Jeda',
  'ritual.resume_lap': 'Lanjutkan putaran',
+ 'ritual.reset_laps': 'Atur ulang putaran ke nol',
  'ritual.fine_print': 'Anda mengonfirmasi setiap putaran sendiri; pergerakan penanda hanyalah simulasi.',
  'ritual.start': 'Mulai {type}',
  'ritual.type_tawaf': 'Tawaf',
@@ -169,6 +171,7 @@ export const id: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'Jarak dan tingkat kepadatan pada model ini adalah simulasi',
  'unit.meters': '{value} m',
+ 'unit.km': '{value} km',
 
  'guide.about': 'Tentang {type} dan zikirnya',
  'guide.meaning_heading': 'Makna dan kisah ibadah ini',
@@ -227,6 +230,8 @@ export const id: Record<TranslationKey, string> = {
  'toast.ritual_note': 'Pelacakan hanya simulasi · menyelesaikan putaran memerlukan konfirmasi Anda',
  'toast.lap_completed': 'Tujuh putaran selesai · tujuan berikutnya siap',
  'toast.lap_undone': 'Konfirmasi putaran terakhir dibatalkan',
+ 'toast.laps_reset': 'Penghitung putaran diatur ulang ke nol',
+ 'toast.journey_reset': 'Perjalanan Anda telah diatur ulang dari awal',
  'toast.demo_intro': 'Demo: dari pintu keluar Mataf ke Safa, dengan titik henti tersimpan di tengah jalan',
 
  'voice.toggle_aria': 'Asisten suara Siraj',

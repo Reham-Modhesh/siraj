@@ -136,6 +136,7 @@ export const tr: Record<TranslationKey, string> = {
  'journey.subtitle': 'Adım adım, huzur içinde',
  'journey.of_ten': '/{value}',
  'journey.stage_count': '{total} aşamadan {current}.',
+ 'journey.reset': 'Yolculuğu sıfırla',
 
  'ritual_select.label': 'Durumunuzu güncelleyin',
  'ritual_select.aria': 'Mevcut ibadet durumu',
@@ -156,6 +157,7 @@ export const tr: Record<TranslationKey, string> = {
  'common.undo': 'Geri al',
  'sim.pause_label': 'Duraklat',
  'ritual.resume_lap': 'Tura devam et',
+ 'ritual.reset_laps': 'Turları sıfırla',
  'ritual.fine_print': 'Her turu siz onaylarsınız; işaretçinin hareketi simülasyondur.',
  'ritual.start': '{type} başlat',
  'ritual.type_tawaf': 'Tavaf',
@@ -169,6 +171,7 @@ export const tr: Record<TranslationKey, string> = {
  'steps.progress': '{current} / {total}',
  'steps.disclaimer': 'Bu modeldeki mesafeler ve yoğunluk simülasyondur',
  'unit.meters': '{value} m',
+ 'unit.km': '{value} km',
 
  'guide.about': '{type} ve zikirleri hakkında',
  'guide.meaning_heading': 'İbadetin anlamı ve hikâyesi',
@@ -227,6 +230,8 @@ export const tr: Record<TranslationKey, string> = {
  'toast.ritual_note': 'Takip simülasyondur · turların tamamlanması onayınızı gerektirir',
  'toast.lap_completed': 'Yedi tur tamamlandı · sonraki hedef hazır',
  'toast.lap_undone': 'Son tur onayı geri alındı',
+ 'toast.laps_reset': 'Tur sayacı sıfırlandı',
+ 'toast.journey_reset': 'Yolculuğunuz baştan sıfırlandı',
  'toast.demo_intro': 'Demo: Mataf çıkışından Safa\'ya, yolun ortasında kayıtlı bir durakla',
 
  'voice.toggle_aria': 'Siraj sesli asistanı',
