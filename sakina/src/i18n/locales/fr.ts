@@ -168,6 +168,7 @@ export const fr: Record<TranslationKey, string> = {
  'unit.km': '{value} km',
 
  'guide.about': 'À propos {type} et de ses invocations',
+ 'guide.close_aria': 'Fermer le guide du rituel',
  'guide.meaning_heading': 'Signification et histoire du rite',
  'guide.dhikr_heading': 'Invocation et rappel',
  'guide.hajar_story_link': "L'histoire de Hajar dans Sahih al-Boukhari",

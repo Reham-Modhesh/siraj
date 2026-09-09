@@ -168,6 +168,7 @@ export const id: Record<TranslationKey, string> = {
  'unit.km': '{value} km',
 
  'guide.about': 'Tentang {type} dan zikirnya',
+ 'guide.close_aria': 'Tutup panduan ritual',
  'guide.meaning_heading': 'Makna dan kisah ibadah ini',
  'guide.dhikr_heading': 'Zikir dan pengingat',
  'guide.hajar_story_link': 'Kisah Hajar dalam Sahih al-Bukhari',

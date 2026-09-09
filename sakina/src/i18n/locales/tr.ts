@@ -168,6 +168,7 @@ export const tr: Record<TranslationKey, string> = {
  'unit.km': '{value} km',
 
  'guide.about': '{type} ve zikirleri hakkında',
+ 'guide.close_aria': 'Nusuk rehberini kapat',
  'guide.meaning_heading': 'İbadetin anlamı ve hikâyesi',
  'guide.dhikr_heading': 'Zikir ve hatırlatma',
  'guide.hajar_story_link': "Sahih-i Buhari'de Hacer'in hikâyesi",

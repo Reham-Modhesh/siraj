@@ -4,9 +4,9 @@
 // Holds a bounded map card instead of a fullscreen map: region switching,
 // floor picking, camera controls, search, turn-by-turn banner and the
 // compact journey stepper all live anchored to that card now.
-import {useMemo, useState, useEffect, Component} from 'react'
+import {useMemo, useState, useEffect, useRef, Component} from 'react'
 import type {ReactNode} from 'react'
-import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic} from 'lucide-react'
+import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic, Volume2, Loader2} from 'lucide-react'
 import Scene from './Scene'
 import RegionNavigator from './RegionNavigator'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -15,6 +15,7 @@ import {levelLabel} from './levels'
 import {useMap, getRemainingMeters} from './store'
 import {pois, stages, navigationSteps, activeStepIndex, resolveDestination, distance} from './navigation'
 import {t, formatNumber, poiName, stageName, stageHint, floorName, ritual, ritualField} from './i18n/index'
+import {SIRAJ_SPEAK_ENDPOINT, truncateForSpeech} from './siraj'
 
 class MapBoundary extends Component<{children: ReactNode}, {failed: boolean}> {
  state = {failed: false}
@@ -66,6 +67,39 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
  useEffect(() => {
   if (s.stage === 3 || s.stage === 4 || s.stage === 7) setGuideOpen(true)
  }, [s.stage])
+ // Derived, not effect-driven: the popup's visibility is a pure function
+ // of "are we on a performing stage the user hasn't dismissed yet" - no
+ // separate boolean to fall out of sync with stage changes/hydration.
+ const [dismissedRitualStage, setDismissedRitualStage] = useState<number | null>(null)
+ const ritualModalOpen = (s.stage === 3 || s.stage === 4 || s.stage === 7) && dismissedRitualStage !== s.stage
+ const closeRitualModal = () => setDismissedRitualStage(s.stage)
+
+ const [guideSpeaking, setGuideSpeaking] = useState(false)
+ const guideAudioRef = useRef<HTMLAudioElement | null>(null)
+ const speakGuide = async () => {
+  if (guideSpeaking) return
+  setGuideSpeaking(true)
+  try {
+   const text = `${ritualField(guide, 'title', lang)}. ${ritualField(guide, 'explanation', lang)}`
+   const res = await fetch(SIRAJ_SPEAK_ENDPOINT, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({text: truncateForSpeech(text), lang}),
+   })
+   if (!res.ok) return
+   const blob = await res.blob()
+   const url = URL.createObjectURL(blob)
+   guideAudioRef.current?.pause()
+   const audio = new Audio(url)
+   guideAudioRef.current = audio
+   audio.onended = () => URL.revokeObjectURL(url)
+   await audio.play()
+  } catch {
+   // Best-effort - the guide's text is already fully visible regardless.
+  } finally {
+   setGuideSpeaking(false)
+  }
+ }
  const cameraAction = (action: string) => window.dispatchEvent(new CustomEvent('sakina-camera', {detail: action}))
  const runSearch = () => {
   if (query.includes('خلص') && query.includes('طواف')) {
@@ -191,7 +225,12 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
       <button className="guide-heading" onClick={() => setGuideOpen(!guideOpen)}><BookOpen size={19} /><span>{t('guide.about', lang, {type: guideType})}</span>{guideOpen ? <ChevronUp size={16} /> : <ChevronDown size={16} />}</button>
       {guideOpen && (
        <div className="guide-body">
-        <h3>{ritualField(guide, 'title', lang)}</h3>
+        <div className="row between">
+         <h3>{ritualField(guide, 'title', lang)}</h3>
+         <button className="text-button small" onClick={speakGuide} disabled={guideSpeaking} aria-label={t('voice.listen_button', lang)}>
+          {guideSpeaking ? <Loader2 size={14} className="siraj-spin" /> : <Volume2 size={14} />}
+         </button>
+        </div>
         <p>{ritualField(guide, 'explanation', lang)}</p>
         <h4>{t('guide.meaning_heading', lang)}</h4>
         <p>{ritualField(guide, 'story', lang)}</p>
@@ -207,6 +246,30 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
     )}
    </div>
    <div className="map-attribution"><span className="scale-line" /><span>{t('attribution.scale', lang, {value: number(50)})}</span><i />{t('attribution.disclaimer', lang)}</div>
+   {ritualModalOpen && (
+    <div className="modal-backdrop">
+     <div className="help-modal ritual-modal">
+      <button className="icon-button modal-close" onClick={closeRitualModal} aria-label={t('guide.close_aria', lang)}><X size={18} /></button>
+      <span className="eyebrow">{guideType}</span>
+      <div className="row between">
+       <h2>{ritualField(guide, 'title', lang)}</h2>
+       <button className="text-button small" onClick={speakGuide} disabled={guideSpeaking}>
+        {guideSpeaking ? <Loader2 size={14} className="siraj-spin" /> : <Volume2 size={14} />}
+        {t('voice.listen_button', lang)}
+       </button>
+      </div>
+      <p>{ritualField(guide, 'explanation', lang)}</p>
+      <h4>{t('guide.meaning_heading', lang)}</h4>
+      <p>{ritualField(guide, 'story', lang)}</p>
+      <h4>{t('guide.dhikr_heading', lang)}</h4>
+      <blockquote>{guide.dhikr}</blockquote>
+      <p>{ritualField(guide, 'dhikrMeaning', lang)}</p>
+      <p>{ritualField(guide, 'dhikrNote', lang)}</p>
+      <a href={guide.url} target="_blank" rel="noreferrer">{ritualField(guide, 'source', lang)}<ExternalLink size={12} /></a>
+      {'storyUrl' in guide && <a href={String(guide.storyUrl)} target="_blank" rel="noreferrer">{t('guide.hajar_story_link', lang)}<ExternalLink size={12} /></a>}
+     </div>
+    </div>
+   )}
   </section>
  )
 }

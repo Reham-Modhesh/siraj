@@ -168,6 +168,7 @@ export const fa: Record<TranslationKey, string> = {
  'unit.km': '{value} کیلومتر',
 
  'guide.about': 'درباره {type} و اذکار آن',
+ 'guide.close_aria': 'بستن راهنمای مناسک',
  'guide.meaning_heading': 'معنا و داستان این مناسک',
  'guide.dhikr_heading': 'ذکر و یادآوری',
  'guide.hajar_story_link': 'داستان هاجر در صحیح بخاری',

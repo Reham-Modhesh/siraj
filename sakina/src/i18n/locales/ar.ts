@@ -169,6 +169,7 @@ export const ar = {
  'unit.km': '{value} كم',
 
  'guide.about': 'عن {type} وأذكاره',
+ 'guide.close_aria': 'إغلاق شرح النسك',
  'guide.meaning_heading': 'معنى الشعيرة وقصتها',
  'guide.dhikr_heading': 'ذكر وتذكير',
  'guide.hajar_story_link': 'قصة هاجر في صحيح البخاري',

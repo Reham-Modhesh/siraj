@@ -168,6 +168,7 @@ export const en: Record<TranslationKey, string> = {
  'unit.km': '{value} km',
 
  'guide.about': 'About {type} and its remembrances',
+ 'guide.close_aria': 'Close ritual guide',
  'guide.meaning_heading': 'Meaning and story of the ritual',
  'guide.dhikr_heading': 'Remembrance and reminder',
  'guide.hajar_story_link': "Hajar's story in Sahih al-Bukhari",

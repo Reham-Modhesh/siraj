@@ -26,6 +26,11 @@
 .siraj-answer p{font-size:12px;line-height:1.8;white-space:pre-line;margin-bottom:8px}
 .siraj-nav-summary{font-size:14px;font-weight:600;color:#2f4a35;margin-bottom:6px}
 .siraj-answer-detail{font-size:11px;color:#5c5c4e}
+.ritual-modal .eyebrow{display:block;margin-bottom:6px}
+.ritual-modal h2{font-size:19px;margin:0}
+.ritual-modal h4{font-size:13px;color:#998351;margin:14px 0 3px}
+.ritual-modal p{font-size:13px;line-height:1.9;color:#7f9270;margin-top:7px}
+.ritual-modal .row.between{align-items:flex-start;gap:10px}
 .siraj-note{color:#a15a3f;line-height:1.7}
 
 /* LanguageSwitcher.tsx - always-visible, writes to the shared s.lang */
@@ -78,7 +83,7 @@
 .map-card .loading{border-radius:16px}
 .map-card .region-select{position:absolute;top:8px;inset-inline-start:8px;padding:6px 10px;border-radius:10px}
 .map-card .region-disclaimer{display:none}
-.map-card .region-caption{position:absolute;bottom:8px;left:50%;transform:translateX(-50%);width:calc(100% - 16px);max-width:320px;min-width:0;padding:10px 12px;bottom:8px}
+.map-card .region-caption{position:absolute;bottom:56px;left:50%;transform:translateX(-50%);width:calc(100% - 16px);max-width:320px;min-width:0;padding:10px 12px}
 .map-card .region-caption>strong{font-size:16px}
 .map-card .floor-picker,.map-card .building-floor-picker{position:absolute;top:52px;inset-inline-end:8px;inset-inline-start:auto;width:120px}
 .map-card .map-controls{position:absolute;bottom:8px;inset-inline:8px;top:auto}

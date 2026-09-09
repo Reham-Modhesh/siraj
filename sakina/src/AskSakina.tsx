@@ -12,7 +12,7 @@
 // shared s.lang (src/store.ts), the same field LanguageSwitcher.tsx writes.
 import {useRef, useState} from 'react'
 import {Loader2, Mic, Send, Volume2, X} from 'lucide-react'
-import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT} from './siraj'
+import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT, truncateForSpeech} from './siraj'
 import {useMap} from './store'
 import {t, poiName, categoryName} from './i18n/index'
 
@@ -81,20 +81,6 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
 
  const [speaking, setSpeaking] = useState(false)
  const audioRef = useRef<HTMLAudioElement | null>(null)
-
- // Gemini's TTS model (i18n/tts.py) reliably 503s on longer answers -
- // confirmed empirically: ~1140 chars fails every time, ~570 succeeds.
- // Siraj's multi-location answers can run well past that, so cut to a
- // safe length at a paragraph/sentence boundary rather than sending the
- // full text and eating a guaranteed failure. The full text still always
- // renders above regardless of what gets spoken.
- const MAX_TTS_CHARS = 700
- const truncateForSpeech = (text: string): string => {
-  if (text.length <= MAX_TTS_CHARS) return text
-  const cut = text.slice(0, MAX_TTS_CHARS)
-  const breakAt = Math.max(cut.lastIndexOf('\n\n'), cut.lastIndexOf('. '), cut.lastIndexOf('؛'), cut.lastIndexOf('.\n'))
-  return (breakAt > MAX_TTS_CHARS * 0.4 ? cut.slice(0, breakAt) : cut).trim() + '…'
- }
 
  const speak = async () => {
   // Real speech output via Gemini (i18n/tts.py, served through

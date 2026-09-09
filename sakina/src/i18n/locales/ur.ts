@@ -168,6 +168,7 @@ export const ur: Record<TranslationKey, string> = {
  'unit.km': '{value} کلومیٹر',
 
  'guide.about': '{type} اور اس کے اذکار کے بارے میں',
+ 'guide.close_aria': 'نسک کی رہنمائی بند کریں',
  'guide.meaning_heading': 'عبادت کا مفہوم اور کہانی',
  'guide.dhikr_heading': 'ذکر اور یاد دہانی',
  'guide.hajar_story_link': 'صحیح بخاری میں حضرت ہاجرہ کا واقعہ',
