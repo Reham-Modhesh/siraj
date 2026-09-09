@@ -14,7 +14,7 @@ import {useRef, useState} from 'react'
 import {Loader2, Mic, Send, Volume2, X} from 'lucide-react'
 import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT} from './siraj'
 import {useMap} from './store'
-import {t} from './i18n/index'
+import {t, poiName, categoryName} from './i18n/index'
 
 // Web Speech API locales - deliberately separate from Siraj's own
 // ISO 639-1 language codes (i18n/translate.py::SUPPORTED_LANGUAGES on the
@@ -31,6 +31,8 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
  const [transcript, setTranscript] = useState('')
  const [questionAr, setQuestionAr] = useState('')
  const [answer, setAnswer] = useState('')
+ const [navSummary, setNavSummary] = useState('')
+ const [detailsOpen, setDetailsOpen] = useState(false)
  const [note, setNote] = useState('')
  const [textValue, setTextValue] = useState('')
  const recognitionRef = useRef<any>(null)
@@ -41,6 +43,8 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
   setQuestionAr('')
   setBusy(true)
   setAnswer('')
+  setNavSummary('')
+  setDetailsOpen(false)
   setNote('')
   try {
    const result = await askSiraj(question, lang)
@@ -49,12 +53,22 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
    // Map navigation is a best-effort side effect on top of an already-
    // correct answer - isolated in its own try/catch so a map failure
    // (e.g. an unexpected bridge/store error) can never wipe out or hide
-   // the answer that's already displayed above.
+   // the answer that's already displayed above. When it resolves to an
+   // actual map action, that short confirmation becomes the primary
+   // thing shown/spoken instead of Siraj's full raw text - the full
+   // answer (sources, hours, reliability notes) is still one tap away
+   // under "تفاصيل أكثر", never discarded.
    try {
     const nav = resolveSirajNavigation(result)
-    if (nav.type === 'navigate') window.sakinaMap.navigateTo(nav.poiId)
-    else if (nav.type === 'nearest') window.sakinaMap.findNearest(nav.category)
-    else if (nav.type === 'unmapped') setNote(t('voice.unmapped_note', lang))
+    if (nav.type === 'navigate') {
+     window.sakinaMap.navigateTo(nav.poiId)
+     setNavSummary(t('voice.nav_confirm_poi', lang, {name: poiName(nav.poiId, lang)}))
+    } else if (nav.type === 'nearest') {
+     window.sakinaMap.findNearest(nav.category)
+     setNavSummary(t('voice.nav_confirm_category', lang, {category: categoryName(nav.category, lang)}))
+    } else if (nav.type === 'unmapped') {
+     setNote(t('voice.unmapped_note', lang))
+    }
    } catch {
     setNote(t('voice.unmapped_note', lang))
    }
@@ -68,6 +82,20 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
  const [speaking, setSpeaking] = useState(false)
  const audioRef = useRef<HTMLAudioElement | null>(null)
 
+ // Gemini's TTS model (i18n/tts.py) reliably 503s on longer answers -
+ // confirmed empirically: ~1140 chars fails every time, ~570 succeeds.
+ // Siraj's multi-location answers can run well past that, so cut to a
+ // safe length at a paragraph/sentence boundary rather than sending the
+ // full text and eating a guaranteed failure. The full text still always
+ // renders above regardless of what gets spoken.
+ const MAX_TTS_CHARS = 700
+ const truncateForSpeech = (text: string): string => {
+  if (text.length <= MAX_TTS_CHARS) return text
+  const cut = text.slice(0, MAX_TTS_CHARS)
+  const breakAt = Math.max(cut.lastIndexOf('\n\n'), cut.lastIndexOf('. '), cut.lastIndexOf('؛'), cut.lastIndexOf('.\n'))
+  return (breakAt > MAX_TTS_CHARS * 0.4 ? cut.slice(0, breakAt) : cut).trim() + '…'
+ }
+
  const speak = async () => {
   // Real speech output via Gemini (i18n/tts.py, served through
   // voice_prototype/server.py's /speak route) - deliberately NOT the
@@ -79,10 +107,14 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
   setNote('')
   setSpeaking(true)
   try {
+   // Prefer the short nav confirmation when one exists - it's what a
+   // real assistant would say out loud, and it comfortably fits Gemini's
+   // TTS length limit on its own, unlike Siraj's full raw answer.
+   const speechText = navSummary || truncateForSpeech(answer)
    const res = await fetch(SIRAJ_SPEAK_ENDPOINT, {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({text: answer, lang}),
+    body: JSON.stringify({text: speechText, lang}),
    })
    if (!res.ok) {
     setNote(t('voice.tts_unavailable', lang))
@@ -95,6 +127,7 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
    audioRef.current = audio
    audio.onended = () => URL.revokeObjectURL(url)
    await audio.play()
+   if (!navSummary && speechText.length < answer.length) setNote(t('voice.tts_partial', lang))
   } catch {
    setNote(t('voice.tts_unavailable', lang))
   } finally {
@@ -187,7 +220,17 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
     )}
     {answer && (
      <div className="siraj-answer">
-      <p>{answer}</p>
+      {navSummary ? (
+       <>
+        <p className="siraj-nav-summary">{navSummary}</p>
+        <button className="text-button small" onClick={() => setDetailsOpen(!detailsOpen)}>
+         {detailsOpen ? t('voice.hide_details', lang) : t('voice.more_details', lang)}
+        </button>
+        {detailsOpen && <p className="siraj-answer-detail">{answer}</p>}
+       </>
+      ) : (
+       <p>{answer}</p>
+      )}
       <button className="text-button small" onClick={speak} disabled={speaking}>
        {speaking ? <Loader2 size={14} className="siraj-spin" /> : <Volume2 size={14} />}
        {t('voice.listen_button', lang)}

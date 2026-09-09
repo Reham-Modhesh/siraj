@@ -24,6 +24,8 @@
 .siraj-transcript{font-size:12px;color:#6d7c66;background:#f4f5ec;border-radius:7px;padding:8px 10px}
 .siraj-answer{background:#f5f5eb;border:1px solid #dfdfcd;border-radius:9px;padding:11px}
 .siraj-answer p{font-size:12px;line-height:1.8;white-space:pre-line;margin-bottom:8px}
+.siraj-nav-summary{font-size:14px;font-weight:600;color:#2f4a35;margin-bottom:6px}
+.siraj-answer-detail{font-size:11px;color:#5c5c4e}
 .siraj-note{color:#a15a3f;line-height:1.7}
 
 /* LanguageSwitcher.tsx - always-visible, writes to the shared s.lang */

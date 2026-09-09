@@ -4,7 +4,7 @@
 // Holds a bounded map card instead of a fullscreen map: region switching,
 // floor picking, camera controls, search, turn-by-turn banner and the
 // compact journey stepper all live anchored to that card now.
-import {useMemo, useState, Component} from 'react'
+import {useMemo, useState, useEffect, Component} from 'react'
 import type {ReactNode} from 'react'
 import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, ChevronUp, ChevronDown, Mic} from 'lucide-react'
 import Scene from './Scene'
@@ -57,6 +57,15 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
  const stage = stages[s.stage]
  const guide = s.stage === 3 ? ritual.tawaf : s.stage === 4 ? ritual.prayer : ritual.sai
  const guideType = s.stage === 3 ? t('ritual.type_tawaf', lang) : s.stage === 4 ? t('ritual.type_prayer', lang) : t('ritual.type_sai', lang)
+ // Show the ritual's how-to/story/dhikr (already fully localized in
+ // i18n/ritual.ts) the moment the pilgrim actually starts it, instead of
+ // leaving it collapsed behind a manual tap they might never notice.
+ // Stages 3/4/7 are the actual performing stages (tawaf/prayer/sai);
+ // stage 6 ("heading to Safa") still renders the guide as a preview but
+ // doesn't force it open since sai hasn't started yet.
+ useEffect(() => {
+  if (s.stage === 3 || s.stage === 4 || s.stage === 7) setGuideOpen(true)
+ }, [s.stage])
  const cameraAction = (action: string) => window.dispatchEvent(new CustomEvent('sakina-camera', {detail: action}))
  const runSearch = () => {
   if (query.includes('خلص') && query.includes('طواف')) {
