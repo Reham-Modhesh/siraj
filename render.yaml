@@ -38,7 +38,10 @@ services:
   - type: web
     name: sakina-frontend
     runtime: static
-    plan: free
+    # No `plan:` here on purpose - static sites (runtime: static) don't run
+    # compute and don't take a plan value; Render rejects "plan: free" on
+    # this service type ("services[1].plan: no such plan free for service
+    # type web"). Static sites are free by default, no field needed.
     buildCommand: "cd sakina && npm install && npm run build"
     staticPublishPath: sakina/dist
     envVars:

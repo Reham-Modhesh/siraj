@@ -24,9 +24,15 @@ import type {Lang} from './i18n/types'
 // actually running the backend, and every request would fail outright
 // (connection refused). typeof window guards the Node test environment
 // (siraj.test.ts), which has no window.
+// An explicitly-set VITE_SIRAJ_API_BASE="" (same-origin deployment, i.e. one
+// process serving both the API and this built frontend on one origin) must
+// win over the localhost:8787 guess below - so this checks "was the env var
+// set at all", not "is it truthy".
+const _envBase = typeof import.meta !== 'undefined' ? (import.meta as any).env?.VITE_SIRAJ_API_BASE : undefined
 const SIRAJ_BASE =
-  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SIRAJ_API_BASE) ||
-  `http://${typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost'}:8787`
+  _envBase !== undefined
+    ? _envBase
+    : `http://${typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost'}:8787`
 export const SIRAJ_ENDPOINT = `${SIRAJ_BASE}/ask`
 export const SIRAJ_SPEAK_ENDPOINT = `${SIRAJ_BASE}/speak`
 

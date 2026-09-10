@@ -30,6 +30,26 @@ from i18n.translate import SUPPORTED_LANGUAGES  # noqa: E402
 from i18n.tts import TTSError, synthesize_speech  # noqa: E402
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
+# Built Sakina frontend (sakina/npm run build). Only present after a
+# production build - local `npm run dev` never creates this, so local dev
+# and Render's two-service setup (render.yaml; backend never builds the
+# frontend) keep serving the standalone prototype page below unchanged. A
+# same-origin deployment that builds this first would get it served
+# directly - no second process/port needed.
+FRONTEND_DIST = Path(__file__).resolve().parent.parent / "sakina" / "dist"
+MIME_TYPES = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "text/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+    ".json": "application/json; charset=utf-8",
+    ".svg": "image/svg+xml",
+    ".png": "image/png",
+    ".jpg": "image/jpeg",
+    ".jpeg": "image/jpeg",
+    ".ico": "image/x-icon",
+    ".woff": "font/woff",
+    ".woff2": "font/woff2",
+}
 # Hosting platforms (Render, Railway, etc.) assign their own port via $PORT
 # and route external HTTPS traffic to it - 8787 stays the local-dev default.
 PORT = int(os.environ.get("PORT", 8787))
@@ -59,6 +79,9 @@ class Handler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        if FRONTEND_DIST.is_dir():
+            self._serve_frontend()
+            return
         if self.path == "/" or self.path == "/index.html":
             html = (STATIC_DIR / "index.html").read_bytes()
             self.send_response(200)
@@ -69,6 +92,28 @@ class Handler(BaseHTTPRequestHandler):
             return
         self.send_response(404)
         self.end_headers()
+
+    def _serve_frontend(self) -> None:
+        # Single-origin deploy: serve the built Sakina app (sakina/dist) for
+        # everything that isn't /ask or /speak. Sakina has no client-side
+        # router (tab-based, all state-driven - see
+        # sakina/src/TabBar.tsx), so any unrecognized path just gets
+        # index.html rather than a 404.
+        rel = self.path.split("?", 1)[0].lstrip("/") or "index.html"
+        candidate = (FRONTEND_DIST / rel).resolve()
+        if FRONTEND_DIST.resolve() not in candidate.parents and candidate != FRONTEND_DIST.resolve():
+            self.send_response(403)
+            self.end_headers()
+            return
+        if not candidate.is_file():
+            candidate = FRONTEND_DIST / "index.html"
+        content_type = MIME_TYPES.get(candidate.suffix, "application/octet-stream")
+        body = candidate.read_bytes()
+        self.send_response(200)
+        self.send_header("Content-Type", content_type)
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
 
     def do_POST(self):
         if self.path == "/ask":
