@@ -9,6 +9,9 @@
 // via findNearest(). Anything outside both is reported as unmapped
 // rather than guessed at.
 import type {Category} from './navigation'
+import {ritual, ritualField} from './i18n/ritual'
+import {t} from './i18n/index'
+import type {Lang} from './i18n/types'
 
 // 'localhost' only means "this machine" - when Sakina is opened from
 // another device on the network (e.g. a phone hitting the dev machine's
@@ -34,6 +37,51 @@ export function truncateForSpeech(text: string): string {
   const cut = text.slice(0, MAX_TTS_CHARS)
   const breakAt = Math.max(cut.lastIndexOf('\n\n'), cut.lastIndexOf('. '), cut.lastIndexOf('؛'), cut.lastIndexOf('.\n'))
   return (breakAt > MAX_TTS_CHARS * 0.4 ? cut.slice(0, breakAt) : cut).trim() + '…'
+}
+
+// Siraj's dataset is locations-only (gates, facilities, landmarks) - it
+// has no content on HOW to actually perform tawaf/sai/the post-tawaf
+// prayer, so those questions always come back as its "no reliable
+// answer" fallback (confirmed by asking it directly). Sakina already has
+// real, sourced content for exactly this - i18n/ritual.ts, sourced from
+// Nusuk and Sahih Muslim/Bukhari, already shown in the ritual-guide
+// popup - so answer these questions from that instead of surfacing
+// Siraj's dead end for something the app already knows. Matched against
+// question_ar (Siraj always returns this, regardless of the question's
+// original language), so this works no matter which of the 7 languages
+// the pilgrim asks in. Order matters: the prayer pattern must be checked
+// before the tawaf one, since "ركعتا الطواف" contains "طواف".
+//
+// Requires an instructional-intent word (كيف/خطوات/كم شوط/دعاء...) on top
+// of the topic keyword - topic alone isn't enough. "صفا"/"سعي" also show
+// up in plain "وين الصفا؟" location questions, which Siraj already
+// answers correctly (confirmed: it recognizes Safa/Marwa as real
+// places) - matching on topic alone would hijack that working case and
+// show ritual how-to instead of the location facts actually asked for.
+const RITUAL_INTENT = /كيف|خطوات|طريقة|كم شوط|كم مرة|كم ركعة|ماذا (أ|ا)قول|أدعية|ادعية|أذكار|اذكار|دعاء/
+const RITUAL_FAQ_PATTERNS: [RegExp, 'tawaf' | 'prayer' | 'sai'][] = [
+  [/ركع|صلاة الطواف/, 'prayer'],
+  [/سعي|أسعى|اسعى|صفا|مروة|المسعى/, 'sai'],
+  [/طواف|أطوف|اطوف/, 'tawaf'],
+]
+
+export function matchRitualFaq(questionAr: string): 'tawaf' | 'prayer' | 'sai' | null {
+  if (!RITUAL_INTENT.test(questionAr)) return null
+  for (const [pattern, type] of RITUAL_FAQ_PATTERNS) {
+    if (pattern.test(questionAr)) return type
+  }
+  return null
+}
+
+export function ritualFaqAnswer(type: 'tawaf' | 'prayer' | 'sai', lang: Lang): string {
+  const entry = ritual[type]
+  return [
+    ritualField(entry, 'title', lang),
+    ritualField(entry, 'explanation', lang),
+    `${t('guide.dhikr_heading', lang)}: ${entry.dhikr}` + (lang !== 'ar' ? ` (${ritualField(entry, 'dhikrMeaning', lang)})` : ''),
+    ritualField(entry, 'dhikrNote', lang),
+    ritualField(entry, 'source', lang),
+  ].filter(Boolean).join('\n\n')
 }
 
 // Siraj location_id -> Sakina POI id, for the handful of places that

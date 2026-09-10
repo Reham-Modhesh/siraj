@@ -1,6 +1,6 @@
 import test from 'node:test'
 import assert from 'node:assert/strict'
-import {resolveSirajNavigation} from './siraj'
+import {resolveSirajNavigation, matchRitualFaq, ritualFaqAnswer} from './siraj'
 
 test('mapped location_id resolves to navigate', () => {
   const r = resolveSirajNavigation({
@@ -16,6 +16,37 @@ test('get_location_details (single object result) also resolves', () => {
     tool_calls: [{tool: 'get_location_details', input: {}, result: {location_id: 'MCH-CORE-003', category: 'نسك أساسي - مقام إبراهيم'}}],
   })
   assert.deepEqual(r, {type: 'navigate', poiId: 'maqam'})
+})
+
+test('ritual FAQ matching: prayer beats tawaf even though "ركعتا الطواف" contains "طواف"', () => {
+  assert.equal(matchRitualFaq('كم ركعة بعد الطواف'), 'prayer')
+  assert.equal(matchRitualFaq('ماذا أقول في صلاة الطواف'), 'prayer')
+})
+
+test('ritual FAQ matching: sai keywords resolve to sai, plain tawaf to tawaf', () => {
+  assert.equal(matchRitualFaq('كيف أسعى بين الصفا والمروة'), 'sai')
+  assert.equal(matchRitualFaq('كيف أطوف حول الكعبة'), 'tawaf')
+})
+
+test('ritual FAQ matching: unrelated questions return null', () => {
+  assert.equal(matchRitualFaq('وين أقرب دورة مياه'), null)
+  assert.equal(matchRitualFaq('هل يوجد مواقف سيارات'), null)
+})
+
+test('ritual FAQ matching: plain location questions naming Safa/Marwa/Tawaf are not hijacked', () => {
+  // These contain the same topic keywords as the how-to questions above,
+  // but no instructional-intent word - Siraj already answers these
+  // correctly with real location facts, so matchRitualFaq must stay out
+  // of the way here.
+  assert.equal(matchRitualFaq('وين الصفا'), null)
+  assert.equal(matchRitualFaq('كم يبعد المطاف عن باب الملك فهد'), null)
+})
+
+test('ritual FAQ answer text is non-empty and localized per language', () => {
+  const ar = ritualFaqAnswer('tawaf', 'ar')
+  const en = ritualFaqAnswer('tawaf', 'en')
+  assert.ok(ar.length > 0 && en.length > 0)
+  assert.notEqual(ar, en)
 })
 
 test('unmapped location_id but known category falls back to nearest', () => {

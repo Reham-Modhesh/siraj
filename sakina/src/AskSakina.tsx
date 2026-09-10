@@ -12,7 +12,7 @@
 // shared s.lang (src/store.ts), the same field LanguageSwitcher.tsx writes.
 import {useRef, useState} from 'react'
 import {Loader2, Mic, Send, Volume2, X} from 'lucide-react'
-import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT, truncateForSpeech} from './siraj'
+import {askSiraj, resolveSirajNavigation, SIRAJ_SPEAK_ENDPOINT, truncateForSpeech, matchRitualFaq, ritualFaqAnswer} from './siraj'
 import {useMap} from './store'
 import {t, poiName, categoryName} from './i18n/index'
 
@@ -49,7 +49,19 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
   try {
    const result = await askSiraj(question, lang)
    if (lang !== 'ar') setQuestionAr(result.question_ar)
-   setAnswer(result.answer)
+   // Siraj's dataset only covers physical locations, not how to actually
+   // perform a ritual - it has no answer for "كيف أطوف؟" etc, and even
+   // when the question also names a real place (e.g. "كيف أسعى بين
+   // الصفا والمروة؟") its answer is pure location facts (hours,
+   // accessibility), no how-to. Sakina already has real, sourced ritual
+   // content (i18n/ritual.ts) for exactly this, so prefer it whenever the
+   // question reads as a how-to ask - matchRitualFaq requires an
+   // instructional-intent word, not just a topic keyword, so it won't
+   // hijack a plain "وين الصفا؟" location question. Navigation below
+   // still runs off Siraj's own (unmodified) result, so a question like
+   // the sa'i example above still moves the map to Safa too.
+   const ritualType = matchRitualFaq(result.question_ar)
+   setAnswer(ritualType ? ritualFaqAnswer(ritualType, lang) : result.answer)
    // Map navigation is a best-effort side effect on top of an already-
    // correct answer - isolated in its own try/catch so a map failure
    // (e.g. an unexpected bridge/store error) can never wipe out or hide
@@ -62,15 +74,20 @@ export default function AskSakina({open, onClose}: {open: boolean; onClose: () =
     const nav = resolveSirajNavigation(result)
     if (nav.type === 'navigate') {
      window.sakinaMap.navigateTo(nav.poiId)
-     setNavSummary(t('voice.nav_confirm_poi', lang, {name: poiName(nav.poiId, lang)}))
+     // A how-to question stays the primary answer even when it also
+     // names a real place worth moving the map to (the sa'i example
+     // above) - the short nav confirmation only takes over the display
+     // for plain location asks, where it's genuinely the more useful
+     // thing to show than Siraj's full raw facts.
+     if (!ritualType) setNavSummary(t('voice.nav_confirm_poi', lang, {name: poiName(nav.poiId, lang)}))
     } else if (nav.type === 'nearest') {
      window.sakinaMap.findNearest(nav.category)
-     setNavSummary(t('voice.nav_confirm_category', lang, {category: categoryName(nav.category, lang)}))
-    } else if (nav.type === 'unmapped') {
+     if (!ritualType) setNavSummary(t('voice.nav_confirm_category', lang, {category: categoryName(nav.category, lang)}))
+    } else if (nav.type === 'unmapped' && !ritualType) {
      setNote(t('voice.unmapped_note', lang))
     }
    } catch {
-    setNote(t('voice.unmapped_note', lang))
+    if (!ritualType) setNote(t('voice.unmapped_note', lang))
    }
   } catch {
    setAnswer(t('voice.error_unreachable', lang))
