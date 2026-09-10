@@ -55,21 +55,22 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
  const meters = getRemainingMeters()
  const minutes = Math.max(1, Math.ceil(meters / 70))
  const stage = stages[s.stage]
- const guide = s.stage === 3 ? ritual.tawaf : s.stage === 4 ? ritual.prayer : ritual.sai
- const guideType = s.stage === 3 ? t('ritual.type_tawaf', lang) : s.stage === 4 ? t('ritual.type_prayer', lang) : t('ritual.type_sai', lang)
+ const guide = s.stage === 3 ? ritual.tawaf : s.stage === 4 ? ritual.prayer : s.stage === 8 ? ritual.completion : ritual.sai
+ const guideType = s.stage === 3 ? t('ritual.type_tawaf', lang) : s.stage === 4 ? t('ritual.type_prayer', lang) : s.stage === 8 ? t('ritual.type_completion', lang) : t('ritual.type_sai', lang)
  // Show the ritual's how-to/story/dhikr (already fully localized in
  // i18n/ritual.ts) the moment the pilgrim actually starts it, instead of
  // leaving it collapsed behind a manual tap they might never notice.
- // Stages 3/4/7 are the actual performing stages (tawaf/prayer/sai).
- // Derived, not effect-driven: the popup's visibility is a pure function
- // of "are we on a performing stage the user hasn't dismissed yet" - no
- // separate boolean to fall out of sync with stage changes/hydration.
- // guideManualOpen covers the same modal reopened on demand later (stage
- // 6's Safa-heading preview included) via the small relink button below,
- // instead of the old always-expandable inline accordion duplicating it.
+ // Stages 3/4/7/8 are the actual performing stages (tawaf/prayer/sai/
+ // shaving-trimming). Derived, not effect-driven: the popup's visibility
+ // is a pure function of "are we on a performing stage the user hasn't
+ // dismissed yet" - no separate boolean to fall out of sync with stage
+ // changes/hydration. guideManualOpen covers the same modal reopened on
+ // demand later (stage 6's Safa-heading preview included) via the small
+ // relink button below, instead of the old always-expandable inline
+ // accordion duplicating it.
  const [dismissedRitualStage, setDismissedRitualStage] = useState<number | null>(null)
  const [guideManualOpen, setGuideManualOpen] = useState(false)
- const ritualModalOpen = ((s.stage === 3 || s.stage === 4 || s.stage === 7) && dismissedRitualStage !== s.stage) || guideManualOpen
+ const ritualModalOpen = ((s.stage === 3 || s.stage === 4 || s.stage === 7 || s.stage === 8) && dismissedRitualStage !== s.stage) || guideManualOpen
  const closeRitualModal = () => {
   setDismissedRitualStage(s.stage)
   setGuideManualOpen(false)
@@ -189,13 +190,16 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
      <button onClick={() => {useMap.setState({follow: true}); s.focus(s.position, 2.8)}} aria-label={t('nav.continue_aria', lang)}><LocateFixed size={19} /></button>
     </div>
    )}
-   {destination && s.route.length > 0 && s.progress >= 1 && !s.ritual && !s.paused && (
+   {destination && s.route.length > 0 && s.progress >= 1 && !s.ritual && !s.paused && !s.completed.includes(9) && (
     // Confirming arrival, then advancing to the next stage, are two
     // separate repeated actions throughout the whole journey - this
     // floating button is the one surface for both (relabeling itself
     // once arrival is confirmed), fixed to the viewport so neither ever
     // requires hunting or scrolling. The navigation-card below no longer
-    // repeats its own version of the same button.
+    // repeats its own version of the same button. Excluded once stage 9
+    // is actually confirmed - completeStage() has nothing left to do at
+    // that point, and the button would just sit there relabeled with no
+    // real next step, next to the umrah-complete-card above.
     <button
      className="confirm-arrival-fab"
      onClick={() => {if (s.arrived.includes(destination.id) && destination.id === stage.poi) s.completeStage(); else s.confirmArrival(destination.id)}}
@@ -230,7 +234,19 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
        <div className="stepper-track"><i style={{width: `${(s.stage / 9) * 100}%`}} /></div>
       </div>
       {s.paused && <div className="resume-card"><span className="row"><RotateCcw size={18} /><strong>{t('summary.resume_title', lang)}</strong></span><p>{t('resume.description', lang)}</p><button className="primary w-full" onClick={s.resume}><Play size={16} />{t('resume.button', lang)}</button></div>}
-      {s.ritual ? (
+      {s.completed.includes(9) ? (
+       // The very last thing shown, once stage 9 is actually confirmed -
+       // checked first, ahead of the ritual/navigation-card branches,
+       // since leftover destination/route state from stage 8 (still
+       // pointing at the exit) would otherwise keep matching the
+       // navigation-card branch below with a "start navigation" button
+       // that no longer means anything once the journey is done.
+       <div className="umrah-complete-card">
+        <CheckCircle2 size={32} />
+        <h2>{t('summary.umrah_complete_title', lang)}</h2>
+        <p>{t('summary.umrah_complete_message', lang)}</p>
+       </div>
+      ) : s.ritual ? (
      <div className="ritual-card">
       <div className="row between"><span className="eyebrow">{s.ritual === 'tawaf' ? t('ritual.tracking_tawaf', lang) : t('ritual.tracking_sai', lang)}</span><span className="live-dot">{s.running ? t('sim.running', lang) : t('sim.paused', lang)}</span></div>
       <div className="lap-number">{number(Math.min(7, (s.ritual === 'tawaf' ? s.tawaf : s.sai) + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
@@ -259,7 +275,7 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
       <button className="primary w-full" onClick={() => s.navigate(stage.poi)}><Navigation size={17} />{t('common.start_navigation', lang)}</button>
      </div>
     )}
-    {(s.stage === 3 || s.stage === 4 || s.stage === 6 || s.stage === 7) && (
+    {(s.stage === 3 || s.stage === 4 || s.stage === 6 || s.stage === 7 || s.stage === 8) && (
      // Same content as the auto-popup modal (title/how-to/story/dhikr) -
      // this is just a way back into it once dismissed, not a second copy
      // of the content sitting expanded on the page at the same time.

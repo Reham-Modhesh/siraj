@@ -159,6 +159,7 @@ export const tr: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'Tavaf',
  'ritual.type_prayer': 'Namaz',
  'ritual.type_sai': "Sa'y",
+ 'ritual.type_completion': "Tıraş veya Kısaltma",
 
  'sim.stop': 'Hareketi durdur',
  'sim.start': 'Hareket simülasyonunu başlat',
@@ -223,6 +224,8 @@ export const tr: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': 'Önce aşama konumuna vardığınızı onaylayın',
  'toast.stage_confirmed': 'Aşama tamamlandığı onaylandı',
  'toast.umrah_complete': 'Umre yolculuğunuz tamamlandı · Allah kabul etsin',
+ 'summary.umrah_complete_title': 'Umre yolculuğunuz tamamlandı',
+ 'summary.umrah_complete_message': 'Allah kabul etsin',
  'toast.seven_laps_done': 'Yedi turu tamamladınız',
  'toast.ritual_note': 'Takip simülasyondur · turların tamamlanması onayınızı gerektirir',
  'toast.lap_completed': 'Yedi tur tamamlandı · sonraki hedef hazır',

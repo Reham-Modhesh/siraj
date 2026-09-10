@@ -159,6 +159,7 @@ export const ur: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'طواف',
  'ritual.type_prayer': 'نماز',
  'ritual.type_sai': 'سعی',
+ 'ritual.type_completion': 'سر منڈوانا یا بال کتروانا',
 
  'sim.stop': 'حرکت روکیں',
  'sim.start': 'حرکت کی سیمولیشن شروع کریں',
@@ -223,6 +224,8 @@ export const ur: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': 'پہلے مرحلے کے مقام پر پہنچنے کی تصدیق کریں',
  'toast.stage_confirmed': 'مرحلہ مکمل ہونے کی تصدیق ہو گئی',
  'toast.umrah_complete': 'آپ کا عمرہ کا سفر مکمل ہو گیا · اللہ آپ سے قبول فرمائے',
+ 'summary.umrah_complete_title': 'آپ کا عمرہ کا سفر مکمل ہو گیا',
+ 'summary.umrah_complete_message': 'اللہ آپ سے قبول فرمائے',
  'toast.seven_laps_done': 'آپ نے سات چکر مکمل کر لیے',
  'toast.ritual_note': 'نگرانی فرضی ہے · چکر مکمل کرنے کے لیے آپ کی تصدیق درکار ہے',
  'toast.lap_completed': 'سات چکر مکمل · اگلی منزل تیار ہے',

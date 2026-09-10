@@ -159,6 +159,7 @@ export const en: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'Tawaf',
  'ritual.type_prayer': 'Prayer',
  'ritual.type_sai': "Sa'i",
+ 'ritual.type_completion': "Shaving/Trimming",
 
  'sim.stop': 'Stop movement',
  'sim.start': 'Start movement simulation',
@@ -223,6 +224,8 @@ export const en: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': 'Confirm your arrival at the stage location first',
  'toast.stage_confirmed': 'Stage completion confirmed',
  'toast.umrah_complete': 'Your Umrah journey is complete · may Allah accept it from you',
+ 'summary.umrah_complete_title': 'Your Umrah journey is complete',
+ 'summary.umrah_complete_message': 'May Allah accept it from you',
  'toast.seven_laps_done': "You've completed all 7 laps",
  'toast.ritual_note': "Tracking is simulated · completing laps needs your confirmation",
  'toast.lap_completed': 'Seven laps complete · next destination ready',

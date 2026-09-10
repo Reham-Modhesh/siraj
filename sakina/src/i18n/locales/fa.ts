@@ -159,6 +159,7 @@ export const fa: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'طواف',
  'ritual.type_prayer': 'نماز',
  'ritual.type_sai': 'سعی',
+ 'ritual.type_completion': 'تراشیدن یا کوتاه کردن مو',
 
  'sim.stop': 'توقف حرکت',
  'sim.start': 'شروع شبیه‌سازی حرکت',
@@ -223,6 +224,8 @@ export const fa: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': 'ابتدا رسیدن خود به مکان مرحله را تأیید کنید',
  'toast.stage_confirmed': 'تکمیل مرحله تأیید شد',
  'toast.umrah_complete': 'سفر عمره شما تکمیل شد · خداوند از شما قبول کند',
+ 'summary.umrah_complete_title': 'سفر عمره شما تکمیل شد',
+ 'summary.umrah_complete_message': 'خداوند از شما قبول کند',
  'toast.seven_laps_done': 'شما هفت دور را کامل کردید',
  'toast.ritual_note': 'پیگیری شبیه‌سازی‌شده است · تکمیل دورها نیاز به تأیید شما دارد',
  'toast.lap_completed': 'هفت دور کامل شد · مقصد بعدی آماده است',

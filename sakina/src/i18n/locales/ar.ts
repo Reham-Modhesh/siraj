@@ -160,6 +160,7 @@ export const ar = {
  'ritual.type_tawaf': 'الطواف',
  'ritual.type_prayer': 'الصلاة',
  'ritual.type_sai': 'السعي',
+ 'ritual.type_completion': 'الحلق أو التقصير',
 
  'sim.stop': 'إيقاف الحركة',
  'sim.start': 'تشغيل محاكاة الحركة',
@@ -225,6 +226,8 @@ export const ar = {
  'toast.confirm_arrival_first': 'أكد وصولك إلى موقع المرحلة أولًا',
  'toast.stage_confirmed': 'تم تأكيد إكمال المرحلة',
  'toast.umrah_complete': 'اكتملت رحلة العمرة · تقبل الله منك',
+ 'summary.umrah_complete_title': 'اكتملت رحلة العمرة',
+ 'summary.umrah_complete_message': 'تقبل الله منك',
  'toast.seven_laps_done': 'أكملت الأشواط السبعة',
  'toast.ritual_note': 'التتبع تجريبي · إكمال الأشواط يحتاج تأكيدك',
  'toast.lap_completed': 'أكملت سبعة أشواط · الوجهة التالية جاهزة',

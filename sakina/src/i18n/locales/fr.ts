@@ -159,6 +159,7 @@ export const fr: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'le Tawaf',
  'ritual.type_prayer': 'la prière',
  'ritual.type_sai': 'le Sa\'i',
+ 'ritual.type_completion': 'se raser ou se couper les cheveux',
 
  'sim.stop': 'Arrêter le déplacement',
  'sim.start': 'Démarrer la simulation de déplacement',
@@ -223,6 +224,8 @@ export const fr: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': "Confirmez d'abord votre arrivée à l'étape",
  'toast.stage_confirmed': "Fin de l'étape confirmée",
  'toast.umrah_complete': 'Votre parcours de Omra est terminé · qu\'Allah l\'accepte de vous',
+ 'summary.umrah_complete_title': 'Votre parcours de Omra est terminé',
+ 'summary.umrah_complete_message': "Qu'Allah l'accepte de vous",
  'toast.seven_laps_done': 'Vous avez terminé les 7 tours',
  'toast.ritual_note': 'Le suivi est simulé · terminer les tours nécessite votre confirmation',
  'toast.lap_completed': 'Sept tours terminés · prochaine destination prête',

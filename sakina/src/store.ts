@@ -19,7 +19,12 @@ interface MapState {
 const storage={getItem:(name:string)=>{try{return localStorage.getItem(name)}catch{return null}},setItem:(name:string,value:string)=>{try{localStorage.setItem(name,value)}catch{queueMicrotask(()=>{if(!useMap.getState().storageError)useMap.setState({storageError:true})})}},removeItem:(name:string)=>{try{localStorage.removeItem(name)}catch{/* Storage may be unavailable. */}}}
 export const useMap=create<MapState>()(persist<MapState, [], [], Partial<MapState>>((set,get)=>({
  region:'haram',lang:'ar',floor:0,userFloor:0,position:[0,0,54],nodeId:'f0-south',direction:0,destination:null,selected:null,route:[],routeIds:[],progress:0,running:false,paused:false,stoppedAt:null,stage:0,started:false,completed:[],arrived:[],tawaf:0,sai:0,ritual:null,accessible:false,closed:[],demo:'off',toast:'',storageError:false,preferQuiet:false,follow:false,lostLandmark:null,camera:{id:0,target:[-5,0,0],zoom:1.9},
- startJourney:()=>set({started:true}),
+ // Stage 0 ("enter through the gate") isn't a real walk the demo can
+ // simulate meaningfully - starting the journey assumes that part
+ // already happened and begins actual navigation from stage 1 (heading
+ // to the mataf) instead, same as completeStage()'s own advance-past-a-
+ // stage logic.
+ startJourney:()=>{set({started:true,completed:[0],arrived:['gate-fahd'],stage:1});get().navigate(stages[1].poi);set({running:true,follow:true})},
  setRegion:region=>{if(region!=='overview'&&!regions.some(r=>r.id===region))return;const f=region==='overview'?0:regionConfig(region).floors.includes(get().floor)?get().floor:0;set({region,floor:f,selected:null,follow:false});if(region==='overview')get().focus([450,10,-25],.24);else{const c=regionConfig(region);get().focus([c.center[0],c.center[1]+floorElevation(region,f),c.center[2]],c.zoom)}},
  startRegionDemo:region=>{const c=regionConfig(region),n=nodes.find(n=>n.id===c.entry)!;set({position:n.position,nodeId:n.id,userFloor:n.floor,floor:n.floor,region,running:false,ritual:null,demo:'off',paused:false,lostLandmark:null});get().navigate(c.destination);set({running:true,follow:true})},
  setLang:lang=>set({lang}),

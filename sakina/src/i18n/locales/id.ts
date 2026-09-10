@@ -159,6 +159,7 @@ export const id: Record<TranslationKey, string> = {
  'ritual.type_tawaf': 'Tawaf',
  'ritual.type_prayer': 'salat',
  'ritual.type_sai': "Sa'i",
+ 'ritual.type_completion': "Mencukur atau Memotong Rambut",
 
  'sim.stop': 'Hentikan pergerakan',
  'sim.start': 'Mulai simulasi pergerakan',
@@ -223,6 +224,8 @@ export const id: Record<TranslationKey, string> = {
  'toast.confirm_arrival_first': 'Konfirmasi kedatangan Anda di lokasi tahap terlebih dahulu',
  'toast.stage_confirmed': 'Penyelesaian tahap dikonfirmasi',
  'toast.umrah_complete': 'Perjalanan Umrah Anda selesai · semoga Allah menerimanya dari Anda',
+ 'summary.umrah_complete_title': 'Perjalanan Umrah Anda selesai',
+ 'summary.umrah_complete_message': 'Semoga Allah menerimanya dari Anda',
  'toast.seven_laps_done': 'Anda telah menyelesaikan tujuh putaran',
  'toast.ritual_note': 'Pelacakan hanya simulasi · menyelesaikan putaran memerlukan konfirmasi Anda',
  'toast.lap_completed': 'Tujuh putaran selesai · tujuan berikutnya siap',
