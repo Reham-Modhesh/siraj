@@ -74,13 +74,15 @@ export function matchRitualFaq(questionAr: string): 'tawaf' | 'prayer' | 'sai' |
 }
 
 export function ritualFaqAnswer(type: 'tawaf' | 'prayer' | 'sai', lang: Lang): string {
+  // Source/citation deliberately left out here - this is the spoken/
+  // read Q&A answer, not the ritual-guide popup (Home.tsx), which still
+  // shows the source as a proper clickable link for whoever wants it.
   const entry = ritual[type]
   return [
     ritualField(entry, 'title', lang),
     ritualField(entry, 'explanation', lang),
     `${t('guide.dhikr_heading', lang)}: ${entry.dhikr}` + (lang !== 'ar' ? ` (${ritualField(entry, 'dhikrMeaning', lang)})` : ''),
     ritualField(entry, 'dhikrNote', lang),
-    ritualField(entry, 'source', lang),
   ].filter(Boolean).join('\n\n')
 }
 
