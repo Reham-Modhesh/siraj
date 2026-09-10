@@ -17,6 +17,7 @@ Then open http://localhost:8787
 """
 
 import json
+import os
 import sys
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -29,7 +30,9 @@ from i18n.translate import SUPPORTED_LANGUAGES  # noqa: E402
 from i18n.tts import TTSError, synthesize_speech  # noqa: E402
 
 STATIC_DIR = Path(__file__).resolve().parent / "static"
-PORT = 8787
+# Hosting platforms (Render, Railway, etc.) assign their own port via $PORT
+# and route external HTTPS traffic to it - 8787 stays the local-dev default.
+PORT = int(os.environ.get("PORT", 8787))
 
 
 class Handler(BaseHTTPRequestHandler):

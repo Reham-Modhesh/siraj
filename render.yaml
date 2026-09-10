@@ -1,0 +1,46 @@
+# Render Blueprint - deploys both halves of this repo as two services from
+# one GitHub connection. See https://render.com/docs/blueprint-spec.
+#
+# Deploy order matters once, the first time:
+#   1. Push this file, connect the repo in Render, click "Apply" - both
+#      services build together.
+#   2. Open the backend service's page in the Render dashboard and copy its
+#      actual public URL (top of the page). It's expected to match
+#      siraj-voice-backend.onrender.com below, but Render gives a different
+#      one if that name is already taken by someone else.
+#   3. If it differs, update VITE_SIRAJ_API_BASE below (or directly in the
+#      frontend service's Environment tab) to the real URL, then redeploy
+#      *only* the frontend service - VITE_SIRAJ_API_BASE is baked in at
+#      build time, so the static site needs a fresh build to pick it up.
+#   4. On the backend service's Environment tab, set OPENROUTER_API_KEY
+#      (left blank here on purpose - never commit a real key). Get one at
+#      https://openrouter.ai/keys if needed.
+#
+# Free-tier services sleep after 15 min idle and take ~30-60s to wake on
+# the next request - for a kiosk an unattended iPad will actually hit
+# ("anyone passing by"), the first question after any idle gap can look
+# stuck/broken for up to a minute. If that's not acceptable, upgrade the
+# backend service specifically to a paid "Starter" plan (keeps it warm);
+# the frontend static site has no runtime to sleep, free is fine there.
+services:
+  - type: web
+    name: siraj-voice-backend
+    runtime: python
+    plan: free
+    buildCommand: "true" # stdlib only - agent/tools/i18n/voice_prototype have no third-party dependencies
+    startCommand: "python3 voice_prototype/server.py"
+    envVars:
+      - key: OPENROUTER_API_KEY
+        sync: false
+      - key: OPENROUTER_MODEL
+        value: google/gemini-2.5-flash-lite
+
+  - type: web
+    name: sakina-frontend
+    runtime: static
+    plan: free
+    buildCommand: "cd sakina && npm install && npm run build"
+    staticPublishPath: sakina/dist
+    envVars:
+      - key: VITE_SIRAJ_API_BASE
+        value: https://siraj-voice-backend.onrender.com

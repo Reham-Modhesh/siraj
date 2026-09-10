@@ -13,17 +13,22 @@ import {ritual, ritualField} from './i18n/ritual'
 import {t} from './i18n/index'
 import type {Lang} from './i18n/types'
 
-// 'localhost' only means "this machine" - when Sakina is opened from
-// another device on the network (e.g. a phone hitting the dev machine's
-// LAN IP, matching how voice_prototype/server.py binds 0.0.0.0), a
-// hardcoded 'localhost' here would point that device at itself instead
-// of back at the machine actually running the backend, and every
-// request would fail outright (connection refused). Deriving the host
-// from the page's own address fixes both cases; typeof window guards
-// the Node test environment (siraj.test.ts), which has no window.
-const SIRAJ_HOST = typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost'
-export const SIRAJ_ENDPOINT = `http://${SIRAJ_HOST}:8787/ask`
-export const SIRAJ_SPEAK_ENDPOINT = `http://${SIRAJ_HOST}:8787/speak`
+// VITE_SIRAJ_API_BASE (set at build time, e.g. on a hosting platform
+// where the frontend and backend are deployed to two different domains -
+// see render.yaml) always wins when present. Falls back to guessing from
+// the page's own address for local dev: 'localhost' only means "this
+// machine", so when Sakina is opened from another device on the network
+// (e.g. a phone hitting the dev machine's LAN IP, matching how
+// voice_prototype/server.py binds 0.0.0.0) a hardcoded 'localhost' here
+// would point that device at itself instead of back at the machine
+// actually running the backend, and every request would fail outright
+// (connection refused). typeof window guards the Node test environment
+// (siraj.test.ts), which has no window.
+const SIRAJ_BASE =
+  (typeof import.meta !== 'undefined' && (import.meta as any).env?.VITE_SIRAJ_API_BASE) ||
+  `http://${typeof window !== 'undefined' && window.location ? window.location.hostname : 'localhost'}:8787`
+export const SIRAJ_ENDPOINT = `${SIRAJ_BASE}/ask`
+export const SIRAJ_SPEAK_ENDPOINT = `${SIRAJ_BASE}/speak`
 
 // Keeps spoken answers to a reasonable length regardless of which TTS
 // provider i18n/tts.py calls (started with Gemini, now openai/gpt-audio
