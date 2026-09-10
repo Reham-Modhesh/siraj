@@ -6,7 +6,7 @@
 // compact journey stepper all live anchored to that card now.
 import {useMemo, useState, useRef, Component} from 'react'
 import type {ReactNode} from 'react'
-import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, Flag, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, Mic, Volume2, Loader2} from 'lucide-react'
+import {Search, MapPin, Navigation, Compass, Plus, Minus, LocateFixed, Layers, X, Check, ArrowUpDown, ArrowRight, ArrowLeft, ArrowUp, Expand, HelpCircle, RotateCcw, Play, Pause, CheckCircle2, Undo2, Route, Footprints, BookOpen, ExternalLink, Mic, Volume2, Loader2} from 'lucide-react'
 import Scene from './Scene'
 import RegionNavigator from './RegionNavigator'
 import LanguageSwitcher from './LanguageSwitcher'
@@ -178,22 +178,30 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
      <button className="primary compact" onClick={() => s.navigate(selected.id)} aria-label={t('selected.navigate_aria', lang)}><Navigation size={16} /><span>{t('selected.navigate_label', lang)}</span></button>
     </div>
    )}
-   {destination && s.route.length > 1 && !s.ritual && !s.paused && !selected && s.floor === s.userFloor && s.region === regionAt(s.position) && (
+   {destination && s.route.length > 1 && !s.ritual && !s.paused && !selected && s.progress < 1 && s.floor === s.userFloor && s.region === regionAt(s.position) && (
+    // Only while still walking - once arrived, the confirm-arrival FAB
+    // below is the one and only place that action lives. Showing this
+    // banner's own "confirm" button at the same time as the FAB (both
+    // doing the same thing a few pixels apart) was the reported clutter.
     <div className="turn-banner">
-     <span className="turn-icon">{s.progress >= 1 ? <Flag size={25} /> : instruction?.turn === 'right' ? <ArrowRight size={25} /> : instruction?.turn === 'left' ? <ArrowLeft size={25} /> : instruction?.turn === 'vertical' ? <ArrowUpDown size={25} /> : <ArrowUp size={25} />}</span>
-     <div><strong>{s.progress >= 1 ? t('nav.arrived_at', lang, {name: poiName(destination.id, lang)}) : instruction?.instruction + ' ' + t('unit.meters', lang, {value: number(stepMeters)})}</strong><span>{s.progress >= 1 ? t('nav.confirm_to_continue', lang) : instruction?.landmark}</span></div>
-     <button onClick={() => {if (s.progress >= 1) s.confirmArrival(destination.id); else {useMap.setState({follow: true}); s.focus(s.position, 2.8)}}} aria-label={t('nav.continue_aria', lang)}>{s.progress >= 1 ? <Check size={19} /> : <LocateFixed size={19} />}</button>
+     <span className="turn-icon">{instruction?.turn === 'right' ? <ArrowRight size={25} /> : instruction?.turn === 'left' ? <ArrowLeft size={25} /> : instruction?.turn === 'vertical' ? <ArrowUpDown size={25} /> : <ArrowUp size={25} />}</span>
+     <div><strong>{instruction?.instruction} {t('unit.meters', lang, {value: number(stepMeters)})}</strong><span>{instruction?.landmark}</span></div>
+     <button onClick={() => {useMap.setState({follow: true}); s.focus(s.position, 2.8)}} aria-label={t('nav.continue_aria', lang)}><LocateFixed size={19} /></button>
     </div>
    )}
    {destination && s.route.length > 0 && s.progress >= 1 && !s.ritual && !s.paused && (
-    // Confirming arrival is a frequent, repeated action throughout the
-    // whole journey - the turn-banner above already offers it, but only
-    // under narrow conditions (matching floor/region, nothing selected).
-    // This floating button is fixed to the viewport instead of the page
-    // flow, so confirming never requires hunting for it or scrolling,
-    // regardless of what's shown elsewhere on Home.
-    <button className="confirm-arrival-fab" onClick={() => s.confirmArrival(destination.id)}>
-     <Check size={18} />{t('common.confirm_arrival', lang)}
+    // Confirming arrival, then advancing to the next stage, are two
+    // separate repeated actions throughout the whole journey - this
+    // floating button is the one surface for both (relabeling itself
+    // once arrival is confirmed), fixed to the viewport so neither ever
+    // requires hunting or scrolling. The navigation-card below no longer
+    // repeats its own version of the same button.
+    <button
+     className="confirm-arrival-fab"
+     onClick={() => {if (s.arrived.includes(destination.id) && destination.id === stage.poi) s.completeStage(); else s.confirmArrival(destination.id)}}
+    >
+     <Check size={18} />
+     {s.arrived.includes(destination.id) && destination.id === stage.poi ? (s.stage === 4 ? t('nav.prayer_done_continue', lang) : t('nav.stage_done_continue', lang)) : t('common.confirm_arrival', lang)}
     </button>
    )}
    {s.ritual && !s.paused && (
@@ -228,7 +236,6 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
       <div className="lap-number">{number(Math.min(7, (s.ritual === 'tawaf' ? s.tawaf : s.sai) + 1))}<span>{t('ritual.of_seven_suffix', lang)}</span></div>
       <h3>{s.ritual === 'tawaf' ? t('ritual.around_kaaba', lang) : s.sai % 2 === 0 ? t('ritual.safa_to_marwa_full', lang) : t('ritual.marwa_to_safa_full', lang)}</h3>
       <div className="lap-dots">{Array.from({length: 7}, (_, i) => <span className={i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? 'done' : ''} key={i}>{i < (s.ritual === 'tawaf' ? s.tawaf : s.sai) ? <Check size={14} /> : number(i + 1)}</span>)}</div>
-      <button className="primary w-full" onClick={s.completeLap}><CheckCircle2 size={17} />{t('ritual.complete_lap', lang)}</button>
       <div className="row"><button className="text-button" onClick={s.undoLap}><Undo2 size={15} />{t('common.undo', lang)}</button><button className="text-button" onClick={s.running ? s.pause : s.resume}>{s.running ? <Pause size={15} /> : <Play size={15} />} {s.running ? t('sim.pause_label', lang) : t('ritual.resume_lap', lang)}</button></div>
       <p className="fine-print">{t('ritual.fine_print', lang)}</p>
      </div>
@@ -240,7 +247,7 @@ export default function Home({picking, setPicking, onAsk}: {picking: boolean; se
       <div className="route-stats"><div><strong>{number(meters)}</strong><span>{t('nav.meters_remaining_label', lang)}</span></div><span /><div><strong>{s.progress >= 1 ? number(0) : number(minutes)}</strong><span>{t('nav.minutes_label', lang)}</span></div><Footprints size={25} /></div>
       <div className="route-progress"><i style={{width: `${s.progress * 100}%`}} /></div>
       <div className="navigation-buttons">
-       {s.progress >= 1 ? <button className="primary w-full" onClick={() => {if (s.arrived.includes(destination.id) && destination.id === stage.poi) s.completeStage(); else s.confirmArrival(destination.id)}}><Check size={17} />{s.arrived.includes(destination.id) && destination.id === stage.poi ? (s.stage === 4 ? t('nav.prayer_done_continue', lang) : t('nav.stage_done_continue', lang)) : t('common.confirm_arrival', lang)}</button> : <button className="primary w-full" onClick={s.simulate}>{s.running ? <Pause size={16} /> : <Play size={16} />} {s.running ? t('sim.stop', lang) : t('sim.start', lang)}</button>}
+       {s.progress < 1 && <button className="primary w-full" onClick={s.simulate}>{s.running ? <Pause size={16} /> : <Play size={16} />} {s.running ? t('sim.stop', lang) : t('sim.start', lang)}</button>}
        <button className="secondary" onClick={s.frameRoute} aria-label={t('nav.frame_route_aria', lang)}><Route size={18} /></button>
       </div>
      </div>
