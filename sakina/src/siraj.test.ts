@@ -28,6 +28,11 @@ test('ritual FAQ matching: sai keywords resolve to sai, plain tawaf to tawaf', (
   assert.equal(matchRitualFaq('كيف أطوف حول الكعبة'), 'tawaf')
 })
 
+test('ritual FAQ matching: completion (shave/trim) beats sai even though "بعد السعي" contains "السعي"', () => {
+  assert.equal(matchRitualFaq('ماذا أفعل بعد السعي'), 'completion')
+  assert.equal(matchRitualFaq('متى أقصر شعري'), 'completion')
+})
+
 test('ritual FAQ matching: unrelated questions return null', () => {
   assert.equal(matchRitualFaq('وين أقرب دورة مياه'), null)
   assert.equal(matchRitualFaq('هل يوجد مواقف سيارات'), null)

@@ -52,20 +52,24 @@ export function truncateForSpeech(text: string): string {
 // the pilgrim asks in. Order matters: the prayer pattern must be checked
 // before the tawaf one, since "ركعتا الطواف" contains "طواف".
 //
-// Requires an instructional-intent word (كيف/خطوات/كم شوط/دعاء...) on top
-// of the topic keyword - topic alone isn't enough. "صفا"/"سعي" also show
-// up in plain "وين الصفا؟" location questions, which Siraj already
-// answers correctly (confirmed: it recognizes Safa/Marwa as real
-// places) - matching on topic alone would hijack that working case and
-// show ritual how-to instead of the location facts actually asked for.
-const RITUAL_INTENT = /كيف|خطوات|طريقة|كم شوط|كم مرة|كم ركعة|ماذا (أ|ا)قول|أدعية|ادعية|أذكار|اذكار|دعاء/
-const RITUAL_FAQ_PATTERNS: [RegExp, 'tawaf' | 'prayer' | 'sai'][] = [
+// Requires an instructional-intent word (كيف/خطوات/كم شوط/دعاء/ماذا
+// أفعل...) on top of the topic keyword - topic alone isn't enough.
+// "صفا"/"سعي" also show up in plain "وين الصفا؟" location questions,
+// which Siraj already answers correctly (confirmed: it recognizes
+// Safa/Marwa as real places) - matching on topic alone would hijack
+// that working case and show ritual how-to instead of the location
+// facts actually asked for.
+const RITUAL_INTENT = /كيف|متى|خطوات|طريقة|كم شوط|كم مرة|كم ركعة|ماذا (أ|ا)قول|ماذا (أ|ا)فعل|وش (أ|ا)سوي|ايش (أ|ا)سوي|ماذا بعد|وش بعد|أدعية|ادعية|أذكار|اذكار|دعاء/
+// 'completion' (shaving/trimming after sa'i) must be checked before
+// 'sai', since "ماذا أفعل بعد السعي؟" contains "السعي" too.
+const RITUAL_FAQ_PATTERNS: [RegExp, 'tawaf' | 'prayer' | 'sai' | 'completion'][] = [
   [/ركع|صلاة الطواف/, 'prayer'],
+  [/حلق|تقصير|قصّر|قصر شعر|بعد السعي|بعد الصفا والمروة|انتهيت من السعي|خلصت السعي|اكملت السعي/, 'completion'],
   [/سعي|أسعى|اسعى|صفا|مروة|المسعى/, 'sai'],
   [/طواف|أطوف|اطوف/, 'tawaf'],
 ]
 
-export function matchRitualFaq(questionAr: string): 'tawaf' | 'prayer' | 'sai' | null {
+export function matchRitualFaq(questionAr: string): 'tawaf' | 'prayer' | 'sai' | 'completion' | null {
   if (!RITUAL_INTENT.test(questionAr)) return null
   for (const [pattern, type] of RITUAL_FAQ_PATTERNS) {
     if (pattern.test(questionAr)) return type
@@ -73,7 +77,7 @@ export function matchRitualFaq(questionAr: string): 'tawaf' | 'prayer' | 'sai' |
   return null
 }
 
-export function ritualFaqAnswer(type: 'tawaf' | 'prayer' | 'sai', lang: Lang): string {
+export function ritualFaqAnswer(type: 'tawaf' | 'prayer' | 'sai' | 'completion', lang: Lang): string {
   // Source/citation deliberately left out here - this is the spoken/
   // read Q&A answer, not the ritual-guide popup (Home.tsx), which still
   // shows the source as a proper clickable link for whoever wants it.

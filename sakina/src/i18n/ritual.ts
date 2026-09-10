@@ -26,7 +26,7 @@ export interface RitualEntry {
  storyUrl?: string
 }
 
-export const ritual: Record<'tawaf' | 'prayer' | 'sai', RitualEntry> = {
+export const ritual: Record<'tawaf' | 'prayer' | 'sai' | 'completion', RitualEntry> = {
  tawaf: {
   dhikr: 'الله أكبر',
   dhikrMeaning: {ar: 'الله أكبر', en: 'Allah is the Greatest', ur: 'اللہ سب سے بڑا ہے', id: 'Allah Mahabesar', tr: 'Allah en büyüktür', fr: 'Allah est le plus Grand', fa: 'الله بزرگ‌تر است'},
@@ -137,6 +137,40 @@ export const ritual: Record<'tawaf' | 'prayer' | 'sai', RitualEntry> = {
   source: {ar: 'صحيح مسلم ١٢١٨ · صحيح البخاري ٣٣٦٤', en: 'Sahih Muslim 1218 · Sahih al-Bukhari 3364', ur: 'صحیح مسلم ١٢١٨ · صحیح بخاری ٣٣٦٤', id: 'Sahih Muslim 1218 · Sahih al-Bukhari 3364', tr: 'Sahih-i Müslim 1218 · Sahih-i Buhari 3364', fr: 'Sahih Muslim 1218 · Sahih al-Boukhari 3364', fa: 'صحیح مسلم ۱۲۱۸ · صحیح بخاری ۳۳۶۴'},
   url: 'https://sunnah.com/muslim/15/159',
   storyUrl: 'https://sunnah.com/bukhari/60/38',
+ },
+ completion: {
+  dhikr: 'اللهم ارحم المحلقين',
+  dhikrMeaning: {ar: 'اللهم ارحم المحلقين', en: 'O Allah, have mercy upon those who shave', ur: 'اے اللہ، سر منڈوانے والوں پر رحم فرما', id: 'Ya Allah, rahmatilah orang-orang yang mencukur habis', tr: "Allah'ım, tıraş olanlara merhamet et", fr: 'Ô Allah, fais miséricorde à ceux qui se rasent', fa: 'خدایا، بر تراشندگان رحم کن'},
+  title: {ar: 'الحلق أو التقصير (إتمام العمرة)', en: 'Shaving or Trimming (Completing Umrah)', ur: 'سر منڈوانا یا بال کتروانا (عمرہ کی تکمیل)', id: 'Mencukur atau Memotong Rambut (Penyempurnaan Umrah)', tr: 'Saç Tıraşı veya Kısaltma (Umrenin Tamamlanması)', fr: 'Se raser ou se couper les cheveux (Achèvement de la Omra)', fa: 'تراشیدن یا کوتاه کردن مو (اتمام عمره)'},
+  explanation: {
+   ar: 'بعد إتمام السعي، احلق شعر رأسك بالكامل أو قصّر منه (يُستحب الحلق للرجال). أما المرأة فتقصّر قدر أنملة من أطراف شعرها فقط، ولا تحلق. بهذا تخرج من الإحرام وتكتمل عمرتك.',
+   en: "After completing Sa'i, shave your head fully or trim it (shaving is preferred for men). A woman trims only about a fingertip's length from the ends of her hair and does not shave. This ends ihram and completes your Umrah.",
+   ur: 'سعی مکمل کرنے کے بعد، اپنے سر کے بال مکمل طور پر منڈوائیں یا کتروائیں (مردوں کے لیے سر منڈوانا افضل ہے)۔ خاتون صرف اپنے بالوں کے سروں سے ایک انگلی کے برابر بال کتروائے، سر نہ منڈوائے۔ اس سے احرام ختم ہو جاتا ہے اور عمرہ مکمل ہوجاتا ہے۔',
+   id: 'Setelah menyelesaikan Sa\'i, cukur habis rambut kepala Anda atau potong sebagian (mencukur habis lebih utama bagi pria). Wanita hanya memotong rambut sepanjang ujung jari dari ujung rambutnya, tidak mencukur habis. Dengan ini ihram berakhir dan Umrah Anda selesai.',
+   tr: "Sa'y'i tamamladıktan sonra, saçınızı tamamen tıraş edin veya kısaltın (erkekler için tıraş etmek daha faziletlidir). Kadın yalnızca saçının uçlarından parmak ucu kadar kısaltır, tıraş olmaz. Böylece ihramdan çıkılır ve Umreniz tamamlanmış olur.",
+   fr: "Après avoir terminé le Sa'i, rasez complètement votre tête ou coupez vos cheveux (le rasage est préférable pour les hommes). Une femme ne coupe qu'environ la longueur d'un doigt aux extrémités de ses cheveux, sans se raser. Cela met fin à l'ihram et achève votre Omra.",
+   fa: 'پس از پایان سعی، موی سر خود را کاملاً بتراشید یا کوتاه کنید (تراشیدن برای مردان برتر است). زن فقط به اندازه یک بند انگشت از انتهای موی خود کوتاه می‌کند و نمی‌تراشد. با این کار از احرام خارج می‌شوید و عمره شما کامل می‌شود.',
+  },
+  story: {
+   ar: 'دعا النبي ﷺ بالرحمة لمن حلق ثلاث مرات، ولمن قصّر مرة واحدة فقط، مبيّنًا أفضلية الحلق للرجال.',
+   en: 'The Prophet ﷺ prayed for mercy upon those who shave three times, and upon those who trim only once - showing that shaving is preferred for men.',
+   ur: 'نبی ﷺ نے سر منڈوانے والوں کے لیے تین بار رحمت کی دعا کی، اور بال کتروانے والوں کے لیے صرف ایک بار — یہ ظاہر کرتا ہے کہ مردوں کے لیے سر منڈوانا افضل ہے۔',
+   id: 'Nabi ﷺ mendoakan rahmat tiga kali bagi yang mencukur habis, dan satu kali bagi yang memotong sebagian - menunjukkan mencukur habis lebih utama bagi pria.',
+   tr: 'Peygamber ﷺ, tıraş olanlara üç kez, sadece kısaltanlara ise bir kez rahmet duası etti; bu, erkekler için tıraşın daha faziletli olduğunu gösterir.',
+   fr: 'Le Prophète ﷺ a invoqué la miséricorde trois fois pour ceux qui se rasent, et une seule fois pour ceux qui se contentent de couper - montrant que le rasage est préférable pour les hommes.',
+   fa: 'پیامبر ﷺ سه بار برای کسانی که می‌تراشند و یک بار برای کسانی که فقط کوتاه می‌کنند دعای رحمت کردند که نشان می‌دهد تراشیدن برای مردان برتر است.',
+  },
+  dhikrNote: {
+   ar: 'من دعاء النبي ﷺ عند إتمام العمرة؛ كرره ثلاثًا للحالقين ومرة واحدة للمقصّرين.',
+   en: "From the Prophet's ﷺ supplication upon completing Umrah; he repeated it three times for those who shave, once for those who trim.",
+   ur: 'نبی ﷺ کی دعا عمرہ کی تکمیل پر؛ آپ ﷺ نے اسے منڈوانے والوں کے لیے تین بار اور کتروانے والوں کے لیے ایک بار دہرایا۔',
+   id: 'Dari doa Nabi ﷺ saat menyelesaikan Umrah; beliau mengulanginya tiga kali bagi yang mencukur habis, sekali bagi yang memotong sebagian.',
+   tr: "Peygamber'in ﷺ Umreyi tamamlarken yaptığı duadan; tıraş olanlar için üç kez, kısaltanlar için bir kez tekrarlamıştır.",
+   fr: "De l'invocation du Prophète ﷺ à l'achèvement de la Omra ; il l'a répétée trois fois pour ceux qui se rasent, une fois pour ceux qui coupent.",
+   fa: 'از دعای پیامبر ﷺ هنگام اتمام عمره؛ آن را سه بار برای تراشندگان و یک بار برای کوتاه‌کنندگان تکرار کردند.',
+  },
+  source: {ar: 'صحيح البخاري · صحيح مسلم', en: 'Sahih al-Bukhari · Sahih Muslim', ur: 'صحیح بخاری · صحیح مسلم', id: 'Sahih al-Bukhari · Sahih Muslim', tr: 'Sahih-i Buhari · Sahih-i Müslim', fr: 'Sahih al-Boukhari · Sahih Muslim', fa: 'صحیح بخاری · صحیح مسلم'},
+  url: 'https://sunnah.com/bukhari/25',
  },
 }
 
